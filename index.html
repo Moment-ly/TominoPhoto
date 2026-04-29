@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomino Photo – Kinetic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FAFAF8;
+  --dark: #111110;
+  --accent: #8B5E3C;
+  --accent-lt: #B07D52;
+  --muted: #9A9590;
+  --border: rgba(139,94,60,0.12);
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Inter', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--dark); font-family: var(--sans); font-weight: 300; overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.4rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(250,250,248,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.4s;
+}
+nav.scrolled { border-color: var(--border); }
+.nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; color: var(--dark); text-decoration: none; font-style: italic; }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.72rem; letter-spacing: 0.1em; transition: color 0.25s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-cta {
+  background: var(--dark); color: var(--bg) !important;
+  padding: 0.5rem 1.25rem; transition: background 0.25s !important;
+}
+.nav-cta:hover { background: var(--accent) !important; }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 8rem 3rem 5rem;
+  position: relative; overflow: hidden;
+}
+
+/* Animated background circles */
+.bg-orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); pointer-events: none; z-index: 0;
+}
+.orb-1 {
+  width: 500px; height: 500px;
+  background: rgba(139,94,60,0.08);
+  top: -100px; right: -100px;
+  animation: orbFloat1 12s ease-in-out infinite;
+}
+.orb-2 {
+  width: 350px; height: 350px;
+  background: rgba(176,125,82,0.06);
+  bottom: -50px; left: 20%;
+  animation: orbFloat2 15s ease-in-out infinite;
+}
+
+.hero-inner {
+  max-width: 1200px; margin: 0 auto; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  position: relative; z-index: 1;
+}
+
+.hero-left { }
+
+.hero-category {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 2rem;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.8s 0.1s ease forwards;
+}
+.category-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5.5vw, 5rem);
+  font-weight: 400; line-height: 1.1;
+  color: var(--dark); margin-bottom: 1.75rem;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.9s 0.2s ease forwards;
+}
+.hero-title em { font-style: italic; color: var(--accent); }
+.hero-title .word { display: inline-block; overflow: hidden; }
+
+.hero-desc {
+  font-size: 0.9rem; color: var(--muted); line-height: 1.85;
+  max-width: 400px; margin-bottom: 2.5rem;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.8s 0.35s ease forwards;
+}
+
+.hero-buttons {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.8s 0.5s ease forwards;
+}
+.btn-dark {
+  background: var(--dark); color: var(--bg);
+  padding: 0.85rem 2rem; text-decoration: none;
+  font-size: 0.72rem; letter-spacing: 0.1em;
+  font-family: var(--sans); transition: all 0.25s; display: inline-block;
+}
+.btn-dark:hover { background: var(--accent); }
+.btn-outline-dark {
+  border: 1px solid rgba(17,17,16,0.2); color: var(--dark);
+  padding: 0.85rem 2rem; text-decoration: none;
+  font-size: 0.72rem; letter-spacing: 0.1em;
+  font-family: var(--sans); transition: all 0.25s; display: inline-block;
+}
+.btn-outline-dark:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Hero photo with animated frame */
+.hero-right {
+  position: relative;
+  opacity: 0; transform: translateX(30px);
+  animation: fadeLeft 1s 0.3s ease forwards;
+}
+.hero-frame {
+  aspect-ratio: 3/4;
+  background: linear-gradient(150deg, #EDE6DB 0%, #D8D0C4 100%);
+  position: relative; overflow: hidden;
+}
+.frame-ph {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.75rem; color: rgba(139,94,60,0.3);
+}
+.frame-ph svg { width: 48px; height: 48px; }
+.frame-ph p { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; text-align: center; max-width: 160px; }
+
+/* Animated corner accents */
+.frame-corner {
+  position: absolute; width: 24px; height: 24px;
+  transition: all 0.5s ease;
+}
+.frame-corner.tl { top: 12px; left: 12px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+.frame-corner.tr { top: 12px; right: 12px; border-top: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+.frame-corner.bl { bottom: 12px; left: 12px; border-bottom: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+.frame-corner.br { bottom: 12px; right: 12px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+.hero-frame:hover .frame-corner { width: 40px; height: 40px; }
+
+/* Floating badge */
+.float-badge {
+  position: absolute; bottom: 2rem; left: -2rem;
+  background: var(--bg); padding: 1rem 1.25rem;
+  box-shadow: 0 8px 32px rgba(17,17,16,0.12);
+  display: flex; align-items: center; gap: 0.75rem;
+  animation: badgeFloat 4s ease-in-out infinite;
+}
+.badge-stars { display: flex; gap: 2px; }
+.badge-star { width: 10px; height: 10px; background: var(--accent); clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
+.badge-text { font-size: 0.72rem; }
+.badge-text strong { display: block; color: var(--dark); font-weight: 500; }
+.badge-text span { color: var(--muted); font-size: 0.62rem; }
+
+/* Floating tag top right */
+.float-tag {
+  position: absolute; top: 2rem; right: -1.5rem;
+  background: var(--accent); color: #fff;
+  padding: 0.6rem 1rem;
+  font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+  writing-mode: vertical-rl; text-orientation: mixed;
+  animation: badgeFloat 5s 1s ease-in-out infinite;
+}
+
+/* ── ANIMATED COUNTER STRIP ── */
+.counter-strip {
+  background: var(--accent);
+  padding: 3rem;
+  display: grid; grid-template-columns: repeat(3,1fr);
+  max-width: none;
+}
+.counter-item {
+  text-align: center; padding: 1rem;
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+.counter-item:last-child { border-right: none; }
+.counter-num {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem,5vw,4rem);
+  font-weight: 400; font-style: italic;
+  color: #fff; display: block; line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.counter-num em { color: rgba(255,255,255,0.75); }
+.counter-label {
+  font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ── ABOUT STRIP ── */
+#about {
+  padding: 8rem 3rem;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+}
+.about-img {
+  aspect-ratio: 4/5;
+  background: linear-gradient(150deg, #EDE6DB 0%, #D8D0C4 100%);
+  position: relative; overflow: hidden;
+}
+.about-img-ph {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.75rem; color: rgba(139,94,60,0.25);
+}
+.about-img-ph svg { width: 44px; height: 44px; }
+.about-img-ph p { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.5; text-align: center; max-width: 150px; }
+/* Parallax tint overlay */
+.about-img::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(139,94,60,0.15) 0%, transparent 50%);
+}
+.about-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.6rem; }
+.about-tag::after { content: ''; flex: 1; max-width: 32px; height: 1px; background: var(--accent); opacity: 0.5; }
+.about-h { font-family: var(--serif); font-size: clamp(2rem,3.5vw,3rem); font-weight: 400; line-height: 1.15; margin-bottom: 1.5rem; }
+.about-h em { font-style: italic; color: var(--accent); }
+.about-p { color: var(--muted); font-size: 0.88rem; line-height: 1.88; margin-bottom: 1.2rem; }
+
+/* ── SERVICES ── */
+#sluzby { background: #F3EDE4; padding: 8rem 3rem; }
+.sluzby-inner { max-width: 1200px; margin: 0 auto; }
+.sluzby-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; }
+.sluzby-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+.sluzby-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 400; }
+.sluzby-h em { font-style: italic; color: var(--accent); }
+.sluzby-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+.svc-card {
+  background: var(--bg); padding: 2.5rem 2rem;
+  position: relative; overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), box-shadow 0.4s;
+  cursor: default;
+}
+.svc-card::before {
+  content: ''; position: absolute;
+  inset: 0; background: var(--accent);
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.23,1,0.32,1);
+  z-index: 0;
+}
+.svc-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(17,17,16,0.12); }
+.svc-card:hover::before { transform: translateY(0); }
+.svc-card > * { position: relative; z-index: 1; transition: color 0.3s; }
+.svc-card:hover .svc-n { color: rgba(255,255,255,0.2); }
+.svc-card:hover .svc-name { color: #fff; }
+.svc-card:hover .svc-desc { color: rgba(255,255,255,0.7); }
+.svc-card:hover .svc-price-val { color: rgba(255,255,255,0.9); }
+.svc-card:hover .svc-price-lbl { color: rgba(255,255,255,0.5); }
+.svc-n { font-family: var(--serif); font-size: 3.5rem; font-style: italic; font-weight: 700; color: rgba(139,94,60,0.1); line-height: 1; margin-bottom: 1.5rem; display: block; }
+.svc-name { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; color: var(--dark); margin-bottom: 0.9rem; }
+.svc-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.8; margin-bottom: 1.5rem; }
+.svc-price-val { font-family: var(--serif); font-size: 1.2rem; color: var(--accent); }
+.svc-price-lbl { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-top: 0.2rem; }
+
+/* ── GALLERY ── */
+#galerie { padding: 8rem 3rem; }
+.gal-inner { max-width: 1200px; margin: 0 auto; }
+.gal-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
+.gal-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+.gal-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 400; }
+.gal-h em { font-style: italic; color: var(--accent); }
+.gal-link { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: gap 0.3s; }
+.gal-link:hover { gap: 1rem; }
+
+/* Staggered grid */
+.stagger-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 220px 180px;
+  gap: 6px;
+}
+.sg-item {
+  position: relative; overflow: hidden; cursor: pointer;
+  background: #E8E0D5;
+}
+.sg-item:nth-child(1) { grid-column: 1; grid-row: 1/3; }
+.sg-item:nth-child(2) { grid-column: 2/4; grid-row: 1; }
+.sg-item:nth-child(3) { grid-column: 4; grid-row: 1/3; }
+.sg-item:nth-child(4) { grid-column: 2; grid-row: 2; }
+.sg-item:nth-child(5) { grid-column: 3; grid-row: 2; }
+.sg-ph {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #EDE6DB 0%, #D8D0C4 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.5rem; color: rgba(139,94,60,0.3);
+  transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+}
+.sg-item:hover .sg-ph { transform: scale(1.04); }
+.sg-ph svg { width: 28px; height: 28px; }
+.sg-ph span { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; }
+.sg-overlay {
+  position: absolute; inset: 0;
+  background: rgba(17,17,16,0.5);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.35s;
+}
+.sg-item:hover .sg-overlay { opacity: 1; }
+.sg-lbl { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 0.2rem; }
+
+/* ── REVIEWS ── */
+#recenze { background: #F3EDE4; padding: 8rem 3rem; }
+.rev-inner { max-width: 1200px; margin: 0 auto; }
+.rev-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; }
+.rev-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+.rev-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 400; color: var(--dark); }
+.rev-h em { font-style: italic; color: var(--accent); }
+/* Horizontal scroll reviews */
+.rev-scroll-wrap { overflow-x: auto; padding-bottom: 1rem; cursor: grab; user-select: none; }
+.rev-scroll-wrap:active { cursor: grabbing; }
+.rev-scroll-wrap::-webkit-scrollbar { height: 2px; }
+.rev-scroll-wrap::-webkit-scrollbar-track { background: rgba(139,94,60,0.08); }
+.rev-scroll-wrap::-webkit-scrollbar-thumb { background: var(--accent); }
+.rev-track { display: flex; gap: 1.5rem; width: max-content; }
+.rev-card {
+  width: 340px; flex-shrink: 0;
+  border: 1px solid var(--border);
+  padding: 2rem; background: var(--bg);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.rev-card:hover { border-color: rgba(139,94,60,0.3); box-shadow: 0 8px 28px rgba(139,94,60,0.08); }
+.rev-stars { display: flex; gap: 3px; margin-bottom: 1.25rem; }
+.star { width: 10px; height: 10px; background: var(--accent); clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
+.rev-text { font-family: var(--serif); font-size: 0.98rem; font-style: italic; color: var(--muted); line-height: 1.78; margin-bottom: 1.5rem; }
+.rev-author { padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.rev-name { font-size: 0.82rem; color: var(--dark); font-weight: 400; }
+.rev-type { font-size: 0.65rem; color: var(--muted); margin-top: 0.2rem; }
+.rev-hint { font-size: 0.62rem; letter-spacing: 0.12em; color: var(--muted); margin-top: 1.5rem; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; opacity: 0.6; }
+.rev-hint svg { width: 14px; height: 14px; }
+
+/* ── CONTACT ── */
+#kontakt { padding: 8rem 3rem; max-width: 1200px; margin: 0 auto; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+.contact-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+.contact-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 400; margin-bottom: 1.25rem; line-height: 1.15; }
+.contact-h em { font-style: italic; color: var(--accent); }
+.contact-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.85; margin-bottom: 2.5rem; }
+.c-items { display: flex; flex-direction: column; gap: 1rem; }
+.c-item { display: flex; align-items: center; gap: 0.9rem; color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.25s; }
+.c-item:hover { color: var(--accent); }
+.c-icon { width: 36px; height: 36px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.25s, background 0.25s; }
+.c-item:hover .c-icon { border-color: var(--accent); background: rgba(139,94,60,0.06); }
+.contact-form { display: flex; flex-direction: column; gap: 1rem; }
+.fg { display: flex; flex-direction: column; gap: 0.4rem; }
+.fg label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+.fg input, .fg select, .fg textarea { background: rgba(17,17,16,0.04); border: 1px solid var(--border); color: var(--dark); padding: 0.8rem 1rem; font-family: var(--sans); font-size: 0.85rem; font-weight: 300; outline: none; transition: border-color 0.25s; appearance: none; }
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--accent); background: rgba(139,94,60,0.03); }
+.fg input::placeholder, .fg textarea::placeholder { color: rgba(154,149,144,0.5); }
+.fg select option { background: var(--bg); }
+.fg textarea { min-height: 110px; resize: vertical; }
+.frow { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.f-btn { background: var(--dark); color: var(--bg); border: none; padding: 1rem; font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all 0.3s cubic-bezier(0.23,1,0.32,1); margin-top: 0.25rem; position: relative; overflow: hidden; }
+.f-btn::after { content: ''; position: absolute; inset: 0; background: var(--accent); transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.23,1,0.32,1); z-index: 0; }
+.f-btn:hover::after { transform: translateX(0); }
+.f-btn span { position: relative; z-index: 1; }
+
+/* ── FOOTER ── */
+footer { border-top: 1px solid var(--border); padding: 2.5rem 3rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: var(--bg); }
+.f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: var(--dark); }
+.f-links { display: flex; gap: 2rem; list-style: none; }
+.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); text-decoration: none; transition: color 0.25s; }
+.f-links a:hover { color: var(--accent); }
+.f-copy { font-size: 0.65rem; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeLeft { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+@keyframes orbFloat1 { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(-30px,20px) scale(1.05); } }
+@keyframes orbFloat2 { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(20px,-30px) scale(1.08); } }
+@keyframes badgeFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+
+/* Scroll reveal */
+.sr { opacity:0; transform:translateY(28px); transition:opacity 0.85s cubic-bezier(0.23,1,0.32,1), transform 0.85s cubic-bezier(0.23,1,0.32,1); }
+.sr.visible { opacity:1; transform:translateY(0); }
+.sr-left { opacity:0; transform:translateX(-28px); transition:opacity 0.85s cubic-bezier(0.23,1,0.32,1), transform 0.85s cubic-bezier(0.23,1,0.32,1); }
+.sr-left.visible { opacity:1; transform:translateX(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  #hero { padding: 6rem 1.5rem 4rem; }
+  .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .hero-right { order: -1; }
+  .float-badge { left: 0; }
+  .float-tag { display: none; }
+  .counter-strip { grid-template-columns: 1fr; padding: 2rem 1.5rem; gap: 1rem; }
+  .counter-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 1.5rem 0; }
+  .counter-item:last-child { border-bottom: none; }
+  #about { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
+  #sluzby { padding: 5rem 1.5rem; }
+  .sluzby-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .sluzby-cards { grid-template-columns: 1fr; }
+  #galerie { padding: 5rem 1.5rem; }
+  .gal-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .stagger-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+  .sg-item:nth-child(1), .sg-item:nth-child(2), .sg-item:nth-child(3), .sg-item:nth-child(4), .sg-item:nth-child(5) { grid-column: auto; grid-row: auto; height: 180px; }
+  #recenze { padding: 5rem 1.5rem; }
+  .rev-top { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .rev-card { width: 280px; }
+  #kontakt { padding: 5rem 1.5rem; }
+  .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .frow { grid-template-columns: 1fr; }
+  footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">Tomino Photo</a>
+  <ul class="nav-links">
+    <li><a href="#about">O mně</a></li>
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#galerie">Galerie</a></li>
+    <li><a href="#recenze">Recenze</a></li>
+    <li><a href="#kontakt" class="nav-cta">Kontakt</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-category"><div class="category-dot"></div>Tomáš Prudík · Fotograf</div>
+      <h1 class="hero-title">
+        Zachycuji<br>
+        <em>momenty,</em><br>
+        které trvají<br>
+        navždy
+      </h1>
+      <p class="hero-desc">Svatební, rodinné a těhotenské focení plné přirozených emocí. Praha a celá ČR.</p>
+      <div class="hero-buttons">
+        <a href="#kontakt" class="btn-dark">Nezávazná poptávka</a>
+        <a href="#sluzby" class="btn-outline-dark">Prohlédnout nabídku</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-frame">
+        <div class="frame-ph">
+          <svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="1.5"/><circle cx="50" cy="20" r="3" fill="currentColor" opacity="0.4"/></svg>
+          <p>Vaše hlavní fotografie</p>
+        </div>
+        <div class="frame-corner tl"></div>
+        <div class="frame-corner tr"></div>
+        <div class="frame-corner bl"></div>
+        <div class="frame-corner br"></div>
+      </div>
+      <div class="float-badge">
+        <div class="badge-stars"><div class="badge-star"></div><div class="badge-star"></div><div class="badge-star"></div><div class="badge-star"></div><div class="badge-star"></div></div>
+        <div class="badge-text"><strong>5.0 hodnocení</strong><span>Google recenze</span></div>
+      </div>
+      <div class="float-tag">Praha & celá ČR</div>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTER STRIP -->
+<div class="counter-strip">
+  <div class="counter-item">
+    <span class="counter-num"><em>5★</em></span>
+    <span class="counter-label">Hodnocení na Google</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num">celá <em>ČR</em></span>
+    <span class="counter-label">Jedu za vámi kamkoliv</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num"><em>∞</em></span>
+    <span class="counter-label">Vzpomínek zachyceno</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-img sr-left">
+    <div class="about-img-ph">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="22" r="12" stroke="currentColor" stroke-width="1.5"/><path d="M8 58c0-13.255 10.745-24 24-24s24 10.745 24 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <p>Váš portrét</p>
+    </div>
+  </div>
+  <div class="sr">
+    <div class="about-tag">O mně</div>
+    <h2 class="about-h">Ahoj, jsem <em>Tomáš</em></h2>
+    <p class="about-p">Fotím, protože miluji zachytávat okamžiky, na které se nezapomíná. Ať už je to pohled novomanželů při prvním tanci, smích dítěte na zahradě nebo něžný dotek čekající maminky na bříško — v každém záběru hledám příběh.</p>
+    <p class="about-p">Věřím, že nejkrásnější fotografie vznikají přirozeně. Proto se snažím, aby se moji klienti cítili uvolněně a pohodlně. Výsledkem jsou snímky plné autenticity a emocí, ne hraného úsměvu.</p>
+    <a href="#kontakt" class="btn-outline-dark" style="margin-top:1rem;">Pojďme se potkat</a>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="sluzby">
+  <div class="sluzby-inner">
+    <div class="sluzby-top sr">
+      <div><div class="sluzby-tag">Nabídka</div><h2 class="sluzby-h">Co pro vás <em>mohu zachytit</em></h2></div>
+    </div>
+    <div class="sluzby-cards">
+      <div class="svc-card sr">
+        <span class="svc-n">01</span>
+        <h3 class="svc-name">Svatební focení</h3>
+        <p class="svc-desc">Váš velký den zachytím od příprav až po poslední taneční kroky. Diskrétně, přirozeně, s citem pro každý detail.</p>
+        <span class="svc-price-val">od 8 000 Kč</span>
+        <span class="svc-price-lbl">3 balíčky dle rozsahu</span>
+      </div>
+      <div class="svc-card sr">
+        <span class="svc-n">02</span>
+        <h3 class="svc-name">Rodinné focení</h3>
+        <p class="svc-desc">Rodina je největší poklad. Zachytím vaše společné chvíle přirozeně — v přírodě, doma nebo kdekoliv, kde se cítíte skvěle.</p>
+        <span class="svc-price-val">2 500 Kč</span>
+        <span class="svc-price-lbl">min. 20 upravených fotografií</span>
+      </div>
+      <div class="svc-card sr">
+        <span class="svc-n">03</span>
+        <h3 class="svc-name">Těhotenské focení</h3>
+        <p class="svc-desc">Těhotenství je jedno z nejkrásnějších období v životě. Zachytím krásu očekávání jemně a přirozeně.</p>
+        <span class="svc-price-val">2 500 Kč</span>
+        <span class="svc-price-lbl">min. 20 upravených fotografií</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="galerie">
+  <div class="gal-inner">
+    <div class="gal-top sr">
+      <div><div class="gal-tag">Portfolio</div><h2 class="gal-h">Ukázka <em>mé práce</em></h2></div>
+      <a href="galerie.html" class="gal-link">Celá galerie <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>    </div>
+    <div class="stagger-grid sr">
+      <div class="sg-item"><div class="sg-ph"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><div class="sg-ph"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><div class="sg-ph"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><div class="sg-ph"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Pár</span></div><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><div class="sg-ph"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Detail</span></div><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS — horizontal scroll -->
+<section id="recenze">
+  <div class="rev-inner">
+    <div class="rev-top sr">
+      <div><div class="rev-tag">Recenze</div><h2 class="rev-h">Co říkají <em>moji klienti</em></h2></div>
+    </div>
+    <div class="rev-scroll-wrap" id="revScroll">
+      <div class="rev-track">
+        <div class="rev-card"><div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><p class="rev-text">Troufám si říct, že lepšího fotografa jsme si na svatbu nemohli vybrat. Tomáš do naší rodinný party během svatby tak zapadl, že vše bylo naprosto přirozené. Výsledné fotky? Naprostá nádhera.</p><div class="rev-author"><p class="rev-name">Dominika Heneš</p><p class="rev-type">Svatební focení</p></div></div>
+        <div class="rev-card"><div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><p class="rev-text">Focení s Tomášem jsme absolvovali už dvakrát a pokaždé jsme byli spokojeni. Pěkné fotky má i náš syn, který jinak před foťákem utíká a nespolupracuje.</p><div class="rev-author"><p class="rev-name">Lucie Knob</p><p class="rev-type">Rodinné & těhotenské focení</p></div></div>
+        <div class="rev-card"><div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><p class="rev-text">Tomáš nás jako rodinu fotil několikrát a zase se k němu rádi vrátíme! Umí zachytit rodinu v momentkách doma i venku a i s neposednými dětmi je pohotový a rychlý.</p><div class="rev-author"><p class="rev-name">Edita Karlová</p><p class="rev-type">Rodinné focení</p></div></div>
+        <div class="rev-card"><div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><p class="rev-text">Byli jsme s Tomášem na těhotenském focení a jsme za to moc rádi. Hotové fotky dodal velmi rychle, domluva perfektní a z výsledku jsme úplně nadšeni.</p><div class="rev-author"><p class="rev-name">Michaela Petrásová</p><p class="rev-type">Těhotenské focení</p></div></div>
+        <div class="rev-card"><div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><p class="rev-text">Skvělý fotograf. Velmi sympatický, ochotný a hlavně byl u všeho podstatného. Finální fotografie ze svatby jsou dokonalé, velice profesionální.</p><div class="rev-author"><p class="rev-name">Soňa L.</p><p class="rev-type">Svatební focení</p></div></div>
+        <div class="rev-card"><div class="rev-stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><p class="rev-text">Měli jsme tu čest mít Tomáše na naší svatbě a nemohli jsme si vybrat lépe. Byl velmi kreativní a díky tomu dokázal spoustu fotek posunout na úplně jiný level.</p><div class="rev-author"><p class="rev-name">Karolína Kinclová</p><p class="rev-type">Svatební focení</p></div></div>
+      </div>
+    </div>
+    <p class="rev-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg> Táhněte pro více recenzí</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="kontakt">
+  <div class="contact-grid">
+    <div class="sr">
+      <div class="contact-tag">Kontakt</div>
+      <h2 class="contact-h">Pojďme spolu <em>tvořit</em></h2>
+      <p class="contact-desc">Napište mi a domluvíme se na detailech. Rád vám poradím s výběrem balíčku nebo lokalitou. Odpovídám zpravidla do 24 hodin.</p>
+      <div class="c-items">
+        <a href="tel:+420123456789" class="c-item"><div class="c-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M14 10.667C13.333 10 12 9.333 11.333 9.333C10.667 9.333 10.333 9.667 9.667 10.333C9.333 10.667 9 11 8.667 10.667C7.667 10 6.667 9 6 8C5.333 7 4.667 6 4.333 5.333C4 5 4.333 4.667 4.667 4.333C5.333 3.667 5.667 3.333 5.667 2.667C5.667 2 5 0.667 4.333 0C3.667 0 2.667 0 2 0.667C-0.333 3 0.667 6.667 3.333 9.333C6 12 9.667 13 12 10.667C12.667 10 12.667 9 12 8.333" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>+420 XXX XXX XXX</a>
+        <a href="mailto:tominophoto@email.cz" class="c-item"><div class="c-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="var(--accent)" stroke-width="1.2"/><path d="M1 4l7 5.5L15 4" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/></svg></div>tominophoto@email.cz</a>
+        <a href="https://instagram.com/tominophoto" target="_blank" class="c-item"><div class="c-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="4" stroke="var(--accent)" stroke-width="1.2"/><circle cx="8" cy="8" r="3.5" stroke="var(--accent)" stroke-width="1.2"/><circle cx="11.5" cy="4.5" r="0.75" fill="var(--accent)"/></svg></div>@tominophoto</a>
+      </div>
+    </div>
+    <div class="sr">
+      <form class="contact-form" id="contactForm">
+        <div class="frow">
+          <div class="fg"><label>Jméno</label><input type="text" name="jmeno" placeholder="Jana Nováková" required></div>
+          <div class="fg"><label>E-mail</label><input type="email" name="email" placeholder="jana@email.cz" required></div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label>Telefon</label><input type="tel" name="telefon" placeholder="+420 000 000 000"></div>
+          <div class="fg"><label>Typ focení</label>
+            <select name="typ_foceni">
+              <option value="" disabled selected>Vyberte typ</option>
+              <option>Svatební focení</option><option>Rodinné focení</option>
+              <option>Těhotenské focení</option><option>Párové focení</option><option>Jiné</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Datum</label><input type="text" name="datum" placeholder="Červen 2025 / zatím nevím"></div>
+        <div class="fg"><label>Zpráva</label><textarea name="zprava" placeholder="Řekněte mi něco o svém plánovaném focení..."></textarea></div>
+        <input type="text" name="_gotcha" style="display:none">
+        <input type="hidden" name="_subject" value="Nová poptávka – Tomino Photo">
+        <button type="submit" class="f-btn" id="submitBtn"><span>Odeslat poptávku</span></button>
+      </form>
+      <div id="ok" style="display:none;padding:2rem;border:1px solid var(--border);background:rgba(139,94,60,0.05);text-align:center;margin-top:1rem;">
+        <p style="font-family:var(--serif);font-size:1.2rem;color:var(--accent);margin-bottom:.4rem;font-style:italic;">Děkuji za zprávu!</p>
+        <p style="font-size:.82rem;color:var(--muted);">Ozvu se vám co nejdříve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">Tomino Photo</div>
+  <ul class="f-links">
+    <li><a href="#about">O mně</a></li>
+    <li><a href="#sluzby">Služby</a></li>
+    <li><a href="#galerie">Galerie</a></li>
+    <li><a href="#recenze">Recenze</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+  <p class="f-copy">© 2025 Tomáš Prudík</p>
+</footer>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 50));
+
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.sr, .sr-left').forEach(el => io.observe(el));
+
+// Drag to scroll reviews
+const revScroll = document.getElementById('revScroll');
+let isDragging = false, startX, scrollLeft;
+revScroll.addEventListener('mousedown', e => { isDragging = true; startX = e.pageX - revScroll.offsetLeft; scrollLeft = revScroll.scrollLeft; });
+revScroll.addEventListener('mouseleave', () => isDragging = false);
+revScroll.addEventListener('mouseup', () => isDragging = false);
+revScroll.addEventListener('mousemove', e => { if(!isDragging) return; e.preventDefault(); const x = e.pageX - revScroll.offsetLeft; revScroll.scrollLeft = scrollLeft - (x - startX) * 1.2; });
+
+// Form
+const form = document.getElementById('contactForm');
+if(form) {
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.querySelector('span').textContent = 'Odesílám...'; btn.disabled = true; btn.style.opacity = '0.7';
+    try {
+      const res = await fetch('https://formspree.io/f/TVUJ_KOD', { method:'POST', body: new FormData(form), headers:{Accept:'application/json'} });
+      if(res.ok) { form.style.display='none'; document.getElementById('ok').style.display='block'; }
+      else throw new Error();
+    } catch { btn.querySelector('span').textContent='Odeslat poptávku'; btn.disabled=false; btn.style.opacity='1'; }
+  });
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  const t = document.querySelector(a.getAttribute('href'));
+  if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); }
+}));
+</script>
+</body>
+</html>

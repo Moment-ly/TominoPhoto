@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Galerie fotografií – Tomino Photo. Tomáš Prudík, svatební, rodinný, těhotenský fotograf a portréty.">
+<title>Galerie – Tomino Photo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #FAFAF8;
+  --bg-alt:   #F3EDE4;
+  --dark:     #111110;
+  --accent:   #8B5E3C;
+  --accent-lt:#B07D52;
+  --muted:    #9A9590;
+  --border:   rgba(139,94,60,0.12);
+  --serif:    'Playfair Display', Georgia, serif;
+  --sans:     'Inter', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--dark); font-family: var(--sans); font-weight: 300; overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.4rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(250,250,248,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--dark); text-decoration: none; }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.72rem; letter-spacing: 0.1em; transition: color 0.25s; }
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
+.nav-cta { background: var(--dark); color: var(--bg) !important; padding: 0.5rem 1.25rem; transition: background 0.25s !important; }
+.nav-cta:hover { background: var(--accent) !important; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+.hamburger span { display: block; width: 22px; height: 1.5px; background: var(--dark); transition: all 0.3s; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  padding: 9rem 3rem 4rem;
+  background: var(--bg);
+  max-width: 1200px; margin: 0 auto;
+}
+.header-tag {
+  font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.header-tag::after { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5; }
+.page-header h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400; line-height: 1.1; color: var(--dark);
+  margin-bottom: 1rem;
+}
+.page-header h1 em { font-style: italic; color: var(--accent); }
+.page-header p { color: var(--muted); font-size: 0.92rem; line-height: 1.8; max-width: 480px; }
+
+/* ── CATEGORY TABS ── */
+.cat-bar {
+  position: sticky; top: 62px; z-index: 50;
+  background: rgba(250,250,248,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 3rem;
+  display: flex; gap: 0;
+  overflow-x: auto;
+}
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-btn {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  color: var(--muted); padding: 1.1rem 1.5rem;
+  font-family: var(--sans); font-size: 0.72rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.25s;
+  white-space: nowrap; font-weight: 300;
+  display: flex; align-items: center; gap: 0.6rem;
+}
+.cat-btn:hover { color: var(--accent); }
+.cat-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.cat-count {
+  font-size: 0.58rem; background: var(--border);
+  color: var(--muted); padding: 0.15rem 0.5rem;
+  border-radius: 20px; transition: all 0.25s;
+}
+.cat-btn.active .cat-count { background: rgba(139,94,60,0.12); color: var(--accent); }
+
+/* ── CATEGORY SECTIONS ── */
+.cat-section { padding: 4rem 3rem; max-width: 1200px; margin: 0 auto; }
+.cat-section[data-hidden="true"] { display: none; }
+
+.cat-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-end; margin-bottom: 2rem;
+  padding-bottom: 1.25rem; border-bottom: 1px solid var(--border);
+}
+.cat-title {
+  font-family: var(--serif); font-size: clamp(1.6rem,3vw,2.4rem);
+  font-weight: 400; color: var(--dark);
+}
+.cat-title em { font-style: italic; color: var(--accent); }
+.cat-desc { font-size: 0.78rem; color: var(--muted); max-width: 320px; text-align: right; line-height: 1.6; }
+
+/* ── MASONRY ── */
+.masonry { columns: 3; column-gap: 8px; }
+.m-item {
+  break-inside: avoid; margin-bottom: 8px;
+  position: relative; overflow: hidden; cursor: pointer;
+  display: block;
+}
+.m-ph {
+  width: 100%;
+  background: linear-gradient(135deg, #EDE6DB 0%, #D8D0C4 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 0.6rem; color: rgba(139,94,60,0.3);
+  transition: transform 0.5s cubic-bezier(0.23,1,0.32,1);
+}
+.m-ph.tall   { padding: 5rem 1rem; }
+.m-ph.normal { padding: 3rem 1rem; }
+.m-ph.short  { padding: 1.75rem 1rem; }
+.m-item:hover .m-ph { transform: scale(1.03); }
+.m-ph svg { width: 26px; height: 26px; opacity: 0.4; }
+.m-ph span { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; }
+
+/* Image mode — same structure but with real img */
+.m-item img { width: 100%; display: block; transition: transform 0.5s cubic-bezier(0.23,1,0.32,1); }
+.m-item:hover img { transform: scale(1.03); }
+
+.m-overlay {
+  position: absolute; inset: 0;
+  background: rgba(17,17,16,0.45);
+  display: flex; align-items: flex-end;
+  padding: 1.25rem;
+  opacity: 0; transition: opacity 0.3s;
+}
+.m-item:hover .m-overlay { opacity: 1; }
+.m-lbl {
+  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.35);
+  padding-bottom: 0.2rem;
+}
+
+/* ── DIVIDER ── */
+.section-divider {
+  height: 1px; background: var(--border);
+  margin: 0 3rem;
+}
+
+/* ── CTA ── */
+.cta-strip {
+  background: var(--accent); padding: 5rem 3rem;
+  text-align: center; margin-top: 4rem;
+}
+.cta-strip h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem,4vw,3rem);
+  font-weight: 400; color: #fff; margin-bottom: 1rem;
+}
+.cta-strip h2 em { font-style: italic; color: rgba(255,255,255,0.75); }
+.cta-strip p { color: rgba(255,255,255,0.65); font-size: 0.9rem; max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.8; }
+.btn-white {
+  background: #fff; color: var(--accent);
+  padding: 0.9rem 2.4rem; text-decoration: none;
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 500; font-family: var(--sans);
+  display: inline-block; transition: all 0.25s;
+}
+.btn-white:hover { background: var(--bg); transform: translateY(-1px); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 3rem; background: var(--bg);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: var(--dark); }
+.f-links { display: flex; gap: 2rem; list-style: none; }
+.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); text-decoration: none; transition: color 0.25s; }
+.f-links a:hover { color: var(--accent); }
+.f-copy { font-size: 0.65rem; color: var(--muted); }
+
+/* ── LIGHTBOX ── */
+#lightbox {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(17,17,16,0.96);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+#lightbox.open { opacity: 1; pointer-events: all; }
+.lb-img { max-width: 88vw; max-height: 88vh; object-fit: contain; display: block; }
+.lb-ph {
+  width: 60vw; max-width: 640px; height: 70vh;
+  background: #1C1A18;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1rem; color: rgba(255,255,255,0.15);
+}
+.lb-ph svg { width: 52px; height: 52px; }
+.lb-ph p { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.4; text-align: center; max-width: 180px; }
+.lb-close {
+  position: absolute; top: 1.5rem; right: 1.75rem;
+  width: 44px; height: 44px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: none; display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.25s;
+}
+.lb-close:hover { border-color: var(--accent); }
+.lb-close svg { width: 16px; height: 16px; }
+.lb-prev, .lb-next {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 48px; height: 48px; cursor: pointer; background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color 0.25s;
+}
+.lb-prev { left: 1.5rem; } .lb-next { right: 1.5rem; }
+.lb-prev:hover, .lb-next:hover { border-color: var(--accent); }
+.lb-prev svg, .lb-next svg { width: 18px; height: 18px; }
+.lb-info {
+  position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+}
+.lb-cat { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+.lb-counter { font-size: 0.65rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .page-header { padding: 7rem 1.5rem 3rem; }
+  .cat-bar { padding: 0 1rem; }
+  .cat-section { padding: 3rem 1.5rem; }
+  .masonry { columns: 2; }
+  .cat-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .cat-desc { text-align: left; }
+  .section-divider { margin: 0 1.5rem; }
+  .cta-strip { padding: 4rem 1.5rem; }
+  footer { flex-direction: column; text-align: center; }
+  .f-links { flex-wrap: wrap; justify-content: center; }
+  .lb-prev { left: 0.5rem; } .lb-next { right: 0.5rem; }
+}
+@media (max-width: 500px) {
+  .masonry { columns: 1; }
+}
+
+/* Mobile nav */
+.body-nav-open .nav-links {
+  display: flex; flex-direction: column;
+  position: fixed; inset: 0; background: var(--bg);
+  align-items: center; justify-content: center;
+  gap: 2rem; z-index: 99;
+}
+.body-nav-open .nav-links a { font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Tomino Photo</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html#about">O mně</a></li>
+    <li><a href="index.html#sluzby">Služby</a></li>
+    <li><a href="index.html#sluzby">Ceník</a></li>
+    <li><a href="galerie.html" class="active">Galerie</a></li>
+    <li><a href="index.html#recenze">Recenze</a></li>
+    <li><a href="index.html#kontakt" class="nav-cta">Kontakt</a></li>
+  </ul>
+  <button class="hamburger" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="header-tag">Portfolio</div>
+  <h1>Moje <em>fotografie</em></h1>
+  <p>Každý snímek vypráví příběh. Prohlédněte si ukázky ze svatebního, rodinného, těhotenského focení a portrétů.</p>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-bar" id="catBar">
+  <button class="cat-btn active" data-cat="all">Vše <span class="cat-count" id="cnt-all">0</span></button>
+  <button class="cat-btn" data-cat="svatba">Svatba <span class="cat-count" id="cnt-svatba">0</span></button>
+  <button class="cat-btn" data-cat="rodina">Rodinné <span class="cat-count" id="cnt-rodina">0</span></button>
+  <button class="cat-btn" data-cat="tehotenstvi">Těhotenské <span class="cat-count" id="cnt-tehotenstvi">0</span></button>
+  <button class="cat-btn" data-cat="portret">Portréty <span class="cat-count" id="cnt-portret">0</span></button>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SEKCE: SVATBA -->
+<!-- ══════════════════════════════════════ -->
+<div class="cat-section" id="sec-svatba" data-section="svatba">
+  <div class="cat-header">
+    <h2 class="cat-title"><em>Svatební</em> focení</h2>
+    <p class="cat-desc">Od ranních příprav po poslední tanec. Každý záběr s citem pro váš příběh.</p>
+  </div>
+  <div class="masonry">
+    <!-- 
+      JAK PŘIDAT FOTKY:
+      Nahraď <div class="m-ph tall"> za <img src="images/svadba-01.jpg" alt="Popis fotky">
+      Třídy tall / normal / short určují výšku placeholderu — u obrázků to řídí samotný poměr stran fotky.
+    -->
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="svatba">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Svatba</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SEKCE: RODINNÉ -->
+<!-- ══════════════════════════════════════ -->
+<div class="cat-section" id="sec-rodina" data-section="rodina">
+  <div class="cat-header">
+    <h2 class="cat-title"><em>Rodinné</em> focení</h2>
+    <p class="cat-desc">Přirozené momenty, radost a smích. Vaše rodina tak, jak ji znáte.</p>
+  </div>
+  <div class="masonry">
+    <div class="m-item" data-cat="rodina">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="rodina">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="rodina">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="rodina">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="rodina">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="rodina">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Rodina</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SEKCE: TĚHOTENSKÉ -->
+<!-- ══════════════════════════════════════ -->
+<div class="cat-section" id="sec-tehotenstvi" data-section="tehotenstvi">
+  <div class="cat-header">
+    <h2 class="cat-title"><em>Těhotenské</em> focení</h2>
+    <p class="cat-desc">Jemné, přirozené. Krása čekání zachycená navždy.</p>
+  </div>
+  <div class="masonry">
+    <div class="m-item" data-cat="tehotenstvi">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="tehotenstvi">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="tehotenstvi">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="tehotenstvi">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="tehotenstvi">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="tehotenstvi">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Těhotenství</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- SEKCE: PORTRÉTY -->
+<!-- ══════════════════════════════════════ -->
+<div class="cat-section" id="sec-portret" data-section="portret">
+  <div class="cat-header">
+    <h2 class="cat-title"><em>Portréty</em></h2>
+    <p class="cat-desc">Osobní portréty, které zachycují charakter a osobnost každého člověka.</p>
+  </div>
+  <div class="masonry">
+    <div class="m-item" data-cat="portret">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Portrét</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="portret">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Portrét</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="portret">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Portrét</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="portret">
+      <div class="m-ph tall"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Portrét</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="portret">
+      <div class="m-ph normal"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Portrét</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+    <div class="m-item" data-cat="portret">
+      <div class="m-ph short"><svg viewBox="0 0 40 40" fill="none"><rect x="4" y="8" width="32" height="24" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="20" r="6" stroke="currentColor" stroke-width="1.5"/></svg><span>Portrét</span></div>
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <h2>Zaujalo vás moje <em>portfolio?</em></h2>
+  <p>Ozvěte se mi a společně zachytíme vaše nejkrásnější momenty.</p>
+  <a href="index.html#kontakt" class="btn-white">Nezávazná poptávka</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-logo">Tomino Photo</div>
+  <ul class="f-links">
+    <li><a href="index.html#about">O mně</a></li>
+    <li><a href="index.html#sluzby">Služby</a></li>
+    <li><a href="galerie.html">Galerie</a></li>
+    <li><a href="index.html#kontakt">Kontakt</a></li>
+  </ul>
+  <p class="f-copy">© 2025 Tomáš Prudík · Tomino Photo</p>
+</footer>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button class="lb-close" id="lbClose">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <button class="lb-prev" id="lbPrev">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div id="lbContent"></div>
+  <button class="lb-next" id="lbNext">
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
+  <div class="lb-info">
+    <span class="lb-cat" id="lbCat"></span>
+    <span class="lb-counter" id="lbCounter"></span>
+  </div>
+</div>
+
+<script>
+// ── Mobile nav
+document.getElementById('ham').addEventListener('click', () => document.body.classList.toggle('body-nav-open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.body.classList.remove('body-nav-open')));
+
+// ── Category labels
+const catLabels = { svatba: 'Svatební', rodina: 'Rodinné', tehotenstvi: 'Těhotenské', portret: 'Portréty' };
+const sections = ['svatba', 'rodina', 'tehotenstvi', 'portret'];
+
+// ── Count items per category and update badges
+sections.forEach(cat => {
+  const count = document.querySelectorAll(`.m-item[data-cat="${cat}"]`).length;
+  document.getElementById(`cnt-${cat}`).textContent = count;
+});
+const total = document.querySelectorAll('.m-item').length;
+document.getElementById('cnt-all').textContent = total;
+
+// ── Filter tabs
+document.querySelectorAll('.cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.cat;
+
+    sections.forEach(cat => {
+      const sec = document.getElementById(`sec-${cat}`);
+      const divider = sec.nextElementSibling;
+      if (filter === 'all' || filter === cat) {
+        sec.removeAttribute('data-hidden');
+        if (divider && divider.classList.contains('section-divider')) divider.style.display = '';
+      } else {
+        sec.setAttribute('data-hidden', 'true');
+        if (divider && divider.classList.contains('section-divider')) divider.style.display = 'none';
+      }
+    });
+
+    // Scroll to first visible section
+    const firstVisible = document.querySelector('.cat-section:not([data-hidden])');
+    if (firstVisible) {
+      const offset = firstVisible.getBoundingClientRect().top + window.scrollY - 130;
+      window.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+  });
+});
+
+// ── Lightbox
+let currentIdx = 0;
+let visibleItems = [];
+
+function getVisibleItems() {
+  return Array.from(document.querySelectorAll('.cat-section:not([data-hidden]) .m-item'));
+}
+
+function openLightbox(item) {
+  visibleItems = getVisibleItems();
+  currentIdx = visibleItems.indexOf(item);
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderLightbox() {
+  const item = visibleItems[currentIdx];
+  const cat = item.dataset.cat;
+  const img = item.querySelector('img');
+  const content = document.getElementById('lbContent');
+
+  if (img) {
+    content.innerHTML = `<img class="lb-img" src="${img.src}" alt="${img.alt || ''}">`;
+  } else {
+    content.innerHTML = `<div class="lb-ph"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="1.5"/></svg><p>Zde se zobrazí vaše fotografie</p></div>`;
+  }
+
+  document.getElementById('lbCat').textContent = catLabels[cat] || '';
+  document.getElementById('lbCounter').textContent = `${currentIdx + 1} / ${visibleItems.length}`;
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.m-item').forEach(item => {
+  item.addEventListener('click', () => openLightbox(item));
+});
+
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
+
+document.getElementById('lbPrev').addEventListener('click', () => {
+  currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length;
+  renderLightbox();
+});
+document.getElementById('lbNext').addEventListener('click', () => {
+  currentIdx = (currentIdx + 1) % visibleItems.length;
+  renderLightbox();
+});
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') { currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length; renderLightbox(); }
+  if (e.key === 'ArrowRight') { currentIdx = (currentIdx + 1) % visibleItems.length; renderLightbox(); }
+});
+</script>
+</body>
+</html>
