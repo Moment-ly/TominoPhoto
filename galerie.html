@@ -347,6 +347,56 @@ footer {
 }
 @media (max-width: 500px) { .masonry { columns: 1; } }
 
+/* ── PROGRESS BAR ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  height: 3px; width: 0%;
+  background: linear-gradient(to right, var(--accent), var(--accent-lt));
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+/* ── INTRO LOADER ── */
+#intro {
+  position: fixed; inset: 0; z-index: 5000;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2rem;
+}
+.intro-logo {
+  font-family: var(--serif); font-size: clamp(2.5rem,6vw,5rem);
+  font-style: italic; font-weight: 300;
+  color: var(--dark); letter-spacing: 0.05em;
+  overflow: hidden; display: flex;
+}
+.intro-char {
+  display: inline-block;
+  transform: translateY(100%); opacity: 0;
+  transition: transform 0.6s cubic-bezier(0.76,0,0.24,1), opacity 0.4s ease;
+}
+.intro-char.space { width: 0.3em; }
+.intro-line {
+  width: 0px; height: 1px; background: var(--accent);
+  transition: width 1s cubic-bezier(0.76,0,0.24,1);
+  margin-top: -0.5rem;
+}
+.intro-sub {
+  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: rgba(17,17,16,0); transition: color 0.5s ease;
+}
+#intro.leaving {
+  transform: translateY(-100%);
+  transition: transform 0.9s cubic-bezier(0.76,0,0.24,1);
+}
+
+/* ── STAGGER ── */
+.sr-stagger > * { opacity:0; transform:translateY(24px); transition:opacity 0.7s cubic-bezier(0.23,1,0.32,1), transform 0.7s cubic-bezier(0.23,1,0.32,1); }
+.sr-stagger.visible > *:nth-child(1) { opacity:1; transform:none; transition-delay:0s; }
+.sr-stagger.visible > *:nth-child(2) { opacity:1; transform:none; transition-delay:0.1s; }
+.sr-stagger.visible > *:nth-child(3) { opacity:1; transform:none; transition-delay:0.2s; }
+.sr-stagger.visible > *:nth-child(4) { opacity:1; transform:none; transition-delay:0.3s; }
+.sr-stagger.visible > *:nth-child(5) { opacity:1; transform:none; transition-delay:0.4s; }
+
 .body-nav-open .nav-links {
   display: flex; flex-direction: column; position: fixed; inset: 0;
   background: var(--bg); align-items: center; justify-content: center;
@@ -355,6 +405,16 @@ footer {
 </style>
 </head>
 <body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
+
+<!-- INTRO LOADER -->
+<div id="intro">
+  <div class="intro-logo" id="introLogo"></div>
+  <div class="intro-line" id="introLine"></div>
+  <div class="intro-sub" id="introSub">Galerie · Portfolio</div>
+</div>
 
 <!-- BLOB CANVAS -->
 <canvas id="blob-canvas"></canvas>
@@ -384,7 +444,7 @@ footer {
 </div>
 
 <!-- FILTER TABS -->
-<div class="filter-bar" id="filterBar">
+<div class="filter-bar sr-stagger" id="filterBar">
   <button class="filter-btn active" data-filter="all">Vše <span class="cat-count" id="cnt-all">0</span></button>
   <button class="filter-btn" data-filter="svatba">Svatba <span class="cat-count" id="cnt-svatba">0</span></button>
   <button class="filter-btn" data-filter="rodina">Rodinné <span class="cat-count" id="cnt-rodina">0</span></button>
@@ -480,12 +540,158 @@ footer {
 </div>
 
 <script>
+// ── INTRO LOADER
+const introText = 'Tomino Photo';
+const logoEl = document.getElementById('introLogo');
+const lineEl = document.getElementById('introLine');
+const subEl  = document.getElementById('introSub');
+
+introText.split('').forEach((ch, i) => {
+  const span = document.createElement('span');
+  span.className = 'intro-char' + (ch === ' ' ? ' space' : '');
+  span.textContent = ch === ' ' ? '\u00A0' : ch;
+  span.style.transitionDelay = (i * 0.05) + 's';
+  logoEl.appendChild(span);
+});
+
+document.body.style.overflow = 'hidden';
+requestAnimationFrame(() => {
+  logoEl.querySelectorAll('.intro-char').forEach(ch => { ch.style.transform='translateY(0)'; ch.style.opacity='1'; });
+  setTimeout(() => { lineEl.style.width='100%'; subEl.style.color='rgba(139,94,60,0.6)'; }, 600);
+  setTimeout(() => { document.getElementById('intro').classList.add('leaving'); document.body.style.overflow=''; }, 1800);
+  setTimeout(() => { document.getElementById('intro').style.display='none'; }, 2700);
+});
+
+// ── PROGRESS BAR
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const max = document.body.scrollHeight - window.innerHeight;
+  progressBar.style.width = (scrollY / max * 100) + '%';
+}, { passive: true });
+
 // ── BLOB CANVAS
 const canvas = document.getElementById('blob-canvas');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+const blobs = [
+  { x:0.1,  y:0.2,  r:0.15, phase:0, color:'rgba(139,94,60,0.06)' },
+  { x:0.85, y:0.35, r:0.2,  phase:2, color:'rgba(139,94,60,0.04)' },
+  { x:0.5,  y:0.75, r:0.14, phase:4, color:'rgba(176,125,82,0.05)' },
+  { x:0.15, y:0.8,  r:0.18, phase:1, color:'rgba(139,94,60,0.05)' },
+];
+function drawBlob(cx, cy, r, t, color) {
+  ctx.beginPath();
+  for(let i=0;i<=16;i++){const a=(i/8)*Math.PI,w=r*(0.15*Math.sin(t*2+i*1.3)+0.1*Math.cos(t*1.5+i*0.9)),rad=r+w;i===0?ctx.moveTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad):ctx.lineTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad);}
+  ctx.closePath(); ctx.fillStyle=color; ctx.fill();
+}
+let bt=0;
+function animateCanvas(){
+  ctx.clearRect(0,0,canvas.width,canvas.height); bt+=0.004;
+  blobs.forEach(b=>{const bx=b.x*canvas.width+Math.sin(bt+b.phase)*60,by=b.y*canvas.height+Math.cos(bt*0.8+b.phase)*50;drawBlob(bx,by,b.r*Math.min(canvas.width,canvas.height),bt+b.phase,b.color);});
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+// ── GENERATE GALLERY ITEMS
+const catConfig = [
+  { cat:'svatba',      count:110, label:'Svatební' },
+  { cat:'rodina',      count:61,  label:'Rodinné' },
+  { cat:'tehotenstvi', count:93,  label:'Těhotenské' },
+  { cat:'portret',     count:37,  label:'Portréty' },
+];
+const catLabels = { svatba:'Svatební', rodina:'Rodinné', tehotenstvi:'Těhotenské', portret:'Portréty' };
+let total = 0;
+
+catConfig.forEach(({ cat, count, label }) => {
+  total += count;
+  const el = document.getElementById(`cnt-${cat}`);
+  if(el) el.textContent = count;
+  const masonry = document.getElementById(`masonry-${cat}`);
+  if(!masonry) return;
+  for(let i=1; i<=count; i++){
+    const num = String(i).padStart(2,'0');
+    const div = document.createElement('div');
+    div.className = 'm-item';
+    div.dataset.cat = cat;
+    div.innerHTML = `<img src="images/${cat}-${num}.jpg" alt="${label}" loading="lazy" style="border-radius:16px;"><div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>`;
+    div.addEventListener('click', () => openLightbox(div));
+    masonry.appendChild(div);
+  }
+});
+document.getElementById('cnt-all').textContent = total;
+
+// ── MOBILE NAV
+document.getElementById('ham').addEventListener('click', () => document.body.classList.toggle('body-nav-open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.body.classList.remove('body-nav-open')));
+
+// ── FILTER
+const sections = ['svatba','rodina','tehotenstvi','portret'];
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    sections.forEach(cat => {
+      const sec = document.getElementById(`sec-${cat}`);
+      const divider = sec.nextElementSibling;
+      const show = filter==='all' || filter===cat;
+      sec.dataset.hidden = show ? 'false' : 'true';
+      if(divider && divider.classList.contains('section-divider')) divider.style.display = show ? '' : 'none';
+    });
+    const first = document.querySelector('.cat-section:not([data-hidden="true"])');
+    if(first) window.scrollTo({ top: first.getBoundingClientRect().top + scrollY - 130, behavior:'smooth' });
+  });
+});
+
+// ── SCROLL REVEAL
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal, .sr-stagger').forEach(el => io.observe(el));
+
+// ── MAGNETIC on CTA button
+document.querySelectorAll('.btn-white, .nav-cta').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const x = e.clientX - r.left - r.width/2;
+    const y = e.clientY - r.top - r.height/2;
+    btn.style.transform = `translate(${x*0.25}px, ${y*0.25}px) scale(1.05)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+});
+
+// ── LIGHTBOX
+let currentIdx=0, visibleItems=[];
+function getVisibleItems(){ return Array.from(document.querySelectorAll('.cat-section:not([data-hidden="true"]) .m-item')); }
+function openLightbox(item){
+  visibleItems=getVisibleItems(); currentIdx=visibleItems.indexOf(item);
+  renderLightbox();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function renderLightbox(){
+  const item=visibleItems[currentIdx];
+  const cat=item.dataset.cat;
+  const img=item.querySelector('img');
+  const content=document.getElementById('lbContent');
+  if(img){ content.innerHTML=`<img class="lb-img" src="${img.src}" alt="${img.alt||''}">`; }
+  else { content.innerHTML=`<div class="lb-ph"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="1.5"/></svg><p>Vaše fotografie</p></div>`; }
+  document.getElementById('lbCat').textContent=catLabels[cat]||'';
+  document.getElementById('lbCounter').textContent=`${currentIdx+1} / ${visibleItems.length}`;
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; }
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target===document.getElementById('lightbox')) closeLightbox(); });
+document.getElementById('lbPrev').addEventListener('click', ()=>{ currentIdx=(currentIdx-1+visibleItems.length)%visibleItems.length; renderLightbox(); });
+document.getElementById('lbNext').addEventListener('click', ()=>{ currentIdx=(currentIdx+1)%visibleItems.length; renderLightbox(); });
+document.addEventListener('keydown', e=>{
+  if(!document.getElementById('lightbox').classList.contains('open')) return;
+  if(e.key==='Escape') closeLightbox();
+  if(e.key==='ArrowLeft'){ currentIdx=(currentIdx-1+visibleItems.length)%visibleItems.length; renderLightbox(); }
+  if(e.key==='ArrowRight'){ currentIdx=(currentIdx+1)%visibleItems.length; renderLightbox(); }
+});
+</script>
 
 const blobs = [
   { x: 0.1, y: 0.2, r: 0.15, phase: 0, color: 'rgba(139,94,60,0.06)' },
