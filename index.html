@@ -727,7 +727,10 @@ footer {
   #hero { padding: 6rem 1.5rem 4rem; }
   .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
   .hero-photo { order: -1; }
+  .hero-scroll { display: none; }
   .float-badge { left: 0; }
+  .hero-frame { transform: none !important; animation: morphFrame 12s ease-in-out infinite !important; }
+  .about-frame { transform: none !important; }
   .about-inner { grid-template-columns: 1fr; gap: 3rem; padding: 5rem 1.5rem; }
   #about { padding: 0; }
   #sluzby { padding: 5rem 1.5rem; }
@@ -1105,7 +1108,7 @@ animateCanvas();
 
 // ── PARALLAX on hero photo
 const heroPhoto = document.querySelector('.hero-frame');
-if(heroPhoto) {
+if(heroPhoto && window.innerWidth > 960) {
   window.addEventListener('scroll', () => {
     const y = scrollY * 0.35;
     heroPhoto.style.transform = `translateY(${y}px)`;
@@ -1114,7 +1117,7 @@ if(heroPhoto) {
 
 // ── PARALLAX on about photo
 const aboutFrame = document.querySelector('.about-frame');
-if(aboutFrame) {
+if(aboutFrame && window.innerWidth > 960) {
   window.addEventListener('scroll', () => {
     const rect = aboutFrame.closest('section').getBoundingClientRect();
     const rel = (window.innerHeight / 2 - rect.top) * 0.12;
