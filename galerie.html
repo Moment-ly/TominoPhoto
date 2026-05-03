@@ -6,10 +6,9 @@
 <meta name="description" content="Galerie fotografií – Tomino Photo. Tomáš Prudík, svatební, rodinný, těhotenský fotograf a portréty.">
 <title>Galerie – Tomino Photo</title>
 <link rel="icon" type="image/png" href="images/favicon.png">
-<link rel="apple-touch-icon" href="images/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -19,85 +18,136 @@
   --dark:     #111110;
   --accent:   #8B5E3C;
   --accent-lt:#B07D52;
+  --accent-bg:#F5EDE2;
   --muted:    #9A9590;
   --border:   rgba(139,94,60,0.12);
-  --serif:    'Playfair Display', Georgia, serif;
-  --sans:     'Inter', sans-serif;
+  --serif:    'Cormorant Garamond', Georgia, serif;
+  --sans:     'Outfit', sans-serif;
 }
 
 html { scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--dark); font-family: var(--sans); font-weight: 300; overflow-x: hidden; }
+body { font-family: var(--sans); background: var(--bg); color: var(--dark); font-weight: 300; overflow-x: hidden; }
+
+/* ── BLOB CANVAS ── */
+#blob-canvas {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0;
+  opacity: 0.5;
+}
 
 /* ── NAV ── */
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 1.4rem 3rem;
+  padding: 1.1rem 3rem;
   display: flex; justify-content: space-between; align-items: center;
   background: rgba(250,250,248,0.95);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
-.nav-logo { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; font-style: italic; color: var(--dark); text-decoration: none; }
+.nav-logo {
+  font-family: var(--serif); font-size: 1.4rem; font-weight: 400; font-style: italic;
+  color: var(--dark); text-decoration: none; letter-spacing: 0.04em;
+  transition: color 0.3s;
+}
+.nav-logo:hover { color: var(--accent); }
 .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
-.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.72rem; letter-spacing: 0.1em; transition: color 0.25s; }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 0.72rem;
+  letter-spacing: 0.1em; transition: color 0.3s; position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+  height: 1px; background: var(--accent);
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.35s ease;
+}
 .nav-links a:hover, .nav-links a.active { color: var(--accent); }
-.nav-cta { background: var(--dark); color: var(--bg) !important; padding: 0.5rem 1.25rem; transition: background 0.25s !important; }
-.nav-cta:hover { background: var(--accent) !important; }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+.nav-cta {
+  background: var(--accent) !important; color: #fff !important;
+  padding: 0.5rem 1.4rem; border-radius: 100px !important;
+  transition: all 0.3s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--accent-lt) !important; }
 .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
 .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--dark); transition: all 0.3s; }
 
 /* ── PAGE HEADER ── */
 .page-header {
-  padding: 9rem 3rem 4rem;
-  background: var(--bg);
-  max-width: 1200px; margin: 0 auto;
+  padding: 8rem 3rem 5rem;
+  position: relative; overflow: hidden; z-index: 1;
 }
+.header-inner { max-width: 1200px; margin: 0 auto; }
+
+.header-blob {
+  position: absolute; width: 500px; height: 500px;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: var(--accent-bg);
+  opacity: 0.5; pointer-events: none;
+  top: -100px; right: -100px;
+  animation: blob 15s ease-in-out infinite;
+}
+
 .header-tag {
-  font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase;
+  font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 1rem;
-  display: flex; align-items: center; gap: 0.6rem;
+  display: flex; align-items: center; gap: 0.75rem;
 }
-.header-tag::after { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); opacity: 0.5; }
+.tag-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: breathe 3s ease-in-out infinite;
+}
 .page-header h1 {
   font-family: var(--serif);
   font-size: clamp(2.5rem, 5vw, 4.5rem);
-  font-weight: 400; line-height: 1.1; color: var(--dark);
+  font-weight: 300; line-height: 1.1; color: var(--dark);
   margin-bottom: 1rem;
 }
 .page-header h1 em { font-style: italic; color: var(--accent); }
 .page-header p { color: var(--muted); font-size: 0.92rem; line-height: 1.8; max-width: 480px; }
 
-/* ── CATEGORY TABS ── */
-.cat-bar {
+/* ── FILTER TABS ── */
+.filter-bar {
   position: sticky; top: 62px; z-index: 50;
   background: rgba(250,250,248,0.97);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 0 3rem;
   display: flex; gap: 0;
   overflow-x: auto;
 }
-.cat-bar::-webkit-scrollbar { display: none; }
-.cat-btn {
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-btn {
   background: none; border: none; border-bottom: 2px solid transparent;
   color: var(--muted); padding: 1.1rem 1.5rem;
   font-family: var(--sans); font-size: 0.72rem;
   letter-spacing: 0.12em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.25s;
+  cursor: pointer; transition: all 0.3s;
   white-space: nowrap; font-weight: 300;
   display: flex; align-items: center; gap: 0.6rem;
+  position: relative;
 }
-.cat-btn:hover { color: var(--accent); }
-.cat-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.filter-btn::after {
+  content: ''; position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px; background: var(--accent);
+  transform: scaleX(0); transform-origin: center;
+  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.filter-btn:hover { color: var(--accent); }
+.filter-btn.active { color: var(--accent); }
+.filter-btn.active::after { transform: scaleX(1); }
 .cat-count {
   font-size: 0.58rem; background: var(--border);
   color: var(--muted); padding: 0.15rem 0.5rem;
-  border-radius: 20px; transition: all 0.25s;
+  border-radius: 100px; transition: all 0.3s;
 }
-.cat-btn.active .cat-count { background: rgba(139,94,60,0.12); color: var(--accent); }
+.filter-btn.active .cat-count { background: rgba(139,94,60,0.12); color: var(--accent); }
 
 /* ── CATEGORY SECTIONS ── */
-.cat-section { padding: 4rem 3rem; max-width: 1200px; margin: 0 auto; }
+.cat-section { padding: 4rem 3rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
 .cat-section[data-hidden="true"] { display: none; }
 
 .cat-header {
@@ -106,41 +156,48 @@ nav {
   padding-bottom: 1.25rem; border-bottom: 1px solid var(--border);
 }
 .cat-title {
-  font-family: var(--serif); font-size: clamp(1.6rem,3vw,2.4rem);
-  font-weight: 400; color: var(--dark);
+  font-family: var(--serif); font-size: clamp(1.8rem,3vw,2.6rem);
+  font-weight: 300; color: var(--dark);
 }
 .cat-title em { font-style: italic; color: var(--accent); }
-.cat-desc { font-size: 0.78rem; color: var(--muted); max-width: 320px; text-align: right; line-height: 1.6; }
+.cat-desc { font-size: 0.78rem; color: var(--muted); max-width: 280px; text-align: right; line-height: 1.6; }
 
 /* ── MASONRY ── */
-.masonry { columns: 3; column-gap: 8px; }
+.masonry { columns: 3; column-gap: 10px; }
 .m-item {
-  break-inside: avoid; margin-bottom: 8px;
+  break-inside: avoid; margin-bottom: 10px;
   position: relative; overflow: hidden; cursor: pointer;
+  border-radius: 16px;
   display: block;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
+.m-item:hover { transform: scale(1.02); z-index: 2; }
+
+.m-item img {
+  width: 100%; display: block;
+  transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+  border-radius: 16px;
+}
+.m-item:hover img { transform: scale(1.06); }
+
 .m-ph {
   width: 100%;
   background: linear-gradient(135deg, #EDE6DB 0%, #D8D0C4 100%);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 0.6rem; color: rgba(139,94,60,0.3);
-  transition: transform 0.5s cubic-bezier(0.23,1,0.32,1);
+  border-radius: 16px;
 }
 .m-ph.tall   { padding: 5rem 1rem; }
 .m-ph.normal { padding: 3rem 1rem; }
 .m-ph.short  { padding: 1.75rem 1rem; }
-.m-item:hover .m-ph { transform: scale(1.03); }
 .m-ph svg { width: 26px; height: 26px; opacity: 0.4; }
 .m-ph span { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; }
 
-/* Image mode — same structure but with real img */
-.m-item img { width: 100%; display: block; transition: transform 0.5s cubic-bezier(0.23,1,0.32,1); }
-.m-item:hover img { transform: scale(1.03); }
-
 .m-overlay {
   position: absolute; inset: 0;
-  background: rgba(17,17,16,0.45);
+  background: rgba(139,94,60,0.5);
+  border-radius: 16px;
   display: flex; align-items: flex-end;
   padding: 1.25rem;
   opacity: 0; transition: opacity 0.3s;
@@ -148,64 +205,82 @@ nav {
 .m-item:hover .m-overlay { opacity: 1; }
 .m-lbl {
   font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
-  border-bottom: 1px solid rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.9);
+  border-bottom: 1px solid rgba(255,255,255,0.4);
   padding-bottom: 0.2rem;
 }
 
-/* ── DIVIDER ── */
+/* ── SECTION DIVIDER ── */
 .section-divider {
   height: 1px; background: var(--border);
-  margin: 0 3rem;
+  margin: 0 3rem; position: relative; z-index: 1;
 }
 
 /* ── CTA ── */
 .cta-strip {
-  background: var(--accent); padding: 5rem 3rem;
-  text-align: center; margin-top: 4rem;
+  background: var(--accent);
+  padding: 6rem 3rem; text-align: center;
+  position: relative; overflow: hidden; margin-top: 4rem;
 }
+.cta-blob {
+  position: absolute; width: 400px; height: 400px;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: rgba(255,255,255,0.08);
+  animation: blob 12s ease-in-out infinite;
+  pointer-events: none;
+}
+.cta-blob.b1 { top: -150px; left: -100px; }
+.cta-blob.b2 { bottom: -150px; right: -100px; animation-delay: -6s; }
 .cta-strip h2 {
   font-family: var(--serif);
   font-size: clamp(1.8rem,4vw,3rem);
-  font-weight: 400; color: #fff; margin-bottom: 1rem;
+  font-weight: 300; color: #fff; margin-bottom: 1rem;
+  position: relative; z-index: 1;
 }
 .cta-strip h2 em { font-style: italic; color: rgba(255,255,255,0.75); }
-.cta-strip p { color: rgba(255,255,255,0.65); font-size: 0.9rem; max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.8; }
+.cta-strip p {
+  color: rgba(255,255,255,0.65); font-size: 0.9rem;
+  max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.8;
+  position: relative; z-index: 1;
+}
 .btn-white {
   background: #fff; color: var(--accent);
   padding: 0.9rem 2.4rem; text-decoration: none;
   font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
   font-weight: 500; font-family: var(--sans);
-  display: inline-block; transition: all 0.25s;
+  border-radius: 100px; display: inline-block;
+  transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative; z-index: 1;
 }
-.btn-white:hover { background: var(--bg); transform: translateY(-1px); }
+.btn-white:hover { background: var(--bg); transform: scale(1.05); }
 
 /* ── FOOTER ── */
 footer {
-  border-top: 1px solid var(--border);
-  padding: 2.5rem 3rem; background: var(--bg);
+  background: var(--dark);
+  border-top: 1px solid rgba(139,94,60,0.15);
+  padding: 2.5rem 3rem;
   display: flex; justify-content: space-between; align-items: center;
   flex-wrap: wrap; gap: 1rem;
 }
-.f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: var(--dark); }
+.f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: #FAFAF8; }
 .f-links { display: flex; gap: 2rem; list-style: none; }
-.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); text-decoration: none; transition: color 0.25s; }
-.f-links a:hover { color: var(--accent); }
-.f-copy { font-size: 0.65rem; color: var(--muted); }
+.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(250,250,248,0.3); text-decoration: none; text-transform: uppercase; transition: color 0.25s; }
+.f-links a:hover { color: var(--accent-lt); }
+.f-copy { font-size: 0.65rem; color: rgba(250,250,248,0.2); }
 
 /* ── LIGHTBOX ── */
 #lightbox {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(17,17,16,0.96);
+  background: rgba(17,17,16,0.97);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none;
   transition: opacity 0.3s;
 }
 #lightbox.open { opacity: 1; pointer-events: all; }
-.lb-img { max-width: 88vw; max-height: 88vh; object-fit: contain; display: block; }
+.lb-img { max-width: 88vw; max-height: 88vh; object-fit: contain; display: block; border-radius: 12px; }
 .lb-ph {
   width: 60vw; max-width: 640px; height: 70vh;
-  background: #1C1A18;
+  background: #1C1A18; border-radius: 12px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 1rem; color: rgba(255,255,255,0.15);
@@ -216,20 +291,22 @@ footer {
   position: absolute; top: 1.5rem; right: 1.75rem;
   width: 44px; height: 44px; cursor: pointer;
   border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 100px;
   background: none; display: flex; align-items: center; justify-content: center;
-  transition: border-color 0.25s;
+  transition: all 0.3s;
 }
-.lb-close:hover { border-color: var(--accent); }
+.lb-close:hover { border-color: var(--accent); background: rgba(139,94,60,0.2); }
 .lb-close svg { width: 16px; height: 16px; }
 .lb-prev, .lb-next {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 48px; height: 48px; cursor: pointer; background: none;
   border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 100px;
   display: flex; align-items: center; justify-content: center;
-  transition: border-color 0.25s;
+  transition: all 0.3s;
 }
 .lb-prev { left: 1.5rem; } .lb-next { right: 1.5rem; }
-.lb-prev:hover, .lb-next:hover { border-color: var(--accent); }
+.lb-prev:hover, .lb-next:hover { border-color: var(--accent); background: rgba(139,94,60,0.2); }
 .lb-prev svg, .lb-next svg { width: 18px; height: 18px; }
 .lb-info {
   position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
@@ -238,15 +315,28 @@ footer {
 .lb-cat { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
 .lb-counter { font-size: 0.65rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); }
 
+/* ── ANIMATIONS ── */
+@keyframes blob {
+  0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+  25%      { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  50%      { border-radius: 40% 60% 30% 70% / 40% 50% 60% 30%; }
+  75%      { border-radius: 70% 30% 60% 40% / 30% 40% 50% 60%; }
+}
+@keyframes breathe { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.4); opacity:0.6; } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+.reveal { opacity:0; transform:translateY(20px); transition:opacity 0.8s cubic-bezier(0.23,1,0.32,1), transform 0.8s cubic-bezier(0.23,1,0.32,1); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
 /* ── MOBILE ── */
 @media (max-width: 900px) {
-  nav { padding: 1rem 1.5rem; }
+  nav { padding: 0.9rem 1.5rem; }
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .page-header { padding: 7rem 1.5rem 3rem; }
-  .cat-bar { padding: 0 1rem; }
+  .filter-bar { padding: 0 1rem; top: 57px; }
   .cat-section { padding: 3rem 1.5rem; }
-  .masonry { columns: 2; }
+  .masonry { columns: 2; column-gap: 8px; }
   .cat-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .cat-desc { text-align: left; }
   .section-divider { margin: 0 1.5rem; }
@@ -255,21 +345,19 @@ footer {
   .f-links { flex-wrap: wrap; justify-content: center; }
   .lb-prev { left: 0.5rem; } .lb-next { right: 0.5rem; }
 }
-@media (max-width: 500px) {
-  .masonry { columns: 1; }
-}
+@media (max-width: 500px) { .masonry { columns: 1; } }
 
-/* Mobile nav */
 .body-nav-open .nav-links {
-  display: flex; flex-direction: column;
-  position: fixed; inset: 0; background: var(--bg);
-  align-items: center; justify-content: center;
+  display: flex; flex-direction: column; position: fixed; inset: 0;
+  background: var(--bg); align-items: center; justify-content: center;
   gap: 2rem; z-index: 99;
 }
-.body-nav-open .nav-links a { font-size: 0.9rem; }
 </style>
 </head>
 <body>
+
+<!-- BLOB CANVAS -->
+<canvas id="blob-canvas"></canvas>
 
 <!-- NAV -->
 <nav>
@@ -277,7 +365,7 @@ footer {
   <ul class="nav-links" id="navLinks">
     <li><a href="index.html#about">O mně</a></li>
     <li><a href="index.html#sluzby">Služby</a></li>
-    <li><a href="index.html#sluzby">Ceník</a></li>
+    <li><a href="index.html#svatba">Ceník</a></li>
     <li><a href="galerie.html" class="active">Galerie</a></li>
     <li><a href="index.html#recenze">Recenze</a></li>
     <li><a href="index.html#kontakt" class="nav-cta">Kontakt</a></li>
@@ -287,1280 +375,74 @@ footer {
 
 <!-- PAGE HEADER -->
 <div class="page-header">
-  <div class="header-tag">Portfolio</div>
-  <h1>Moje <em>fotografie</em></h1>
-  <p>Každý snímek vypráví příběh. Prohlédněte si ukázky ze svatebního, rodinného, těhotenského focení a portrétů.</p>
+  <div class="header-blob"></div>
+  <div class="header-inner reveal">
+    <div class="header-tag"><div class="tag-dot"></div>Portfolio</div>
+    <h1>Moje <em>fotografie</em></h1>
+    <p>Každý snímek vypráví příběh. Prohlédněte si ukázky ze svatebního, rodinného, těhotenského focení a portrétů.</p>
+  </div>
 </div>
 
-<!-- CATEGORY TABS -->
-<div class="cat-bar" id="catBar">
-  <button class="cat-btn active" data-cat="all">Vše <span class="cat-count" id="cnt-all">0</span></button>
-  <button class="cat-btn" data-cat="svatba">Svatba <span class="cat-count" id="cnt-svatba">0</span></button>
-  <button class="cat-btn" data-cat="rodina">Rodinné <span class="cat-count" id="cnt-rodina">0</span></button>
-  <button class="cat-btn" data-cat="tehotenstvi">Těhotenské <span class="cat-count" id="cnt-tehotenstvi">0</span></button>
-  <button class="cat-btn" data-cat="portret">Portréty <span class="cat-count" id="cnt-portret">0</span></button>
+<!-- FILTER TABS -->
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all">Vše <span class="cat-count" id="cnt-all">0</span></button>
+  <button class="filter-btn" data-filter="svatba">Svatba <span class="cat-count" id="cnt-svatba">0</span></button>
+  <button class="filter-btn" data-filter="rodina">Rodinné <span class="cat-count" id="cnt-rodina">0</span></button>
+  <button class="filter-btn" data-filter="tehotenstvi">Těhotenské <span class="cat-count" id="cnt-tehotenstvi">0</span></button>
+  <button class="filter-btn" data-filter="portret">Portréty <span class="cat-count" id="cnt-portret">0</span></button>
 </div>
 
-<!-- ══════════════════════════════════════ -->
 <!-- SEKCE: SVATBA -->
-<!-- ══════════════════════════════════════ -->
-<div class="cat-section" id="sec-svatba" data-section="svatba">
+<div class="cat-section reveal" id="sec-svatba" data-section="svatba">
   <div class="cat-header">
     <h2 class="cat-title"><em>Svatební</em> focení</h2>
     <p class="cat-desc">Od ranních příprav po poslední tanec. Každý záběr s citem pro váš příběh.</p>
   </div>
-  <div class="masonry">
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-01.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-02.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-03.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-04.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-05.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-06.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-07.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-08.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-09.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-10.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-11.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-12.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-13.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-14.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-15.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-16.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-17.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-18.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-19.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-20.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-21.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-22.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-23.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-24.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-25.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-26.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-27.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-28.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-29.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-30.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-31.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-32.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-33.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-34.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-35.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-36.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-37.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-38.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-39.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-40.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-41.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-42.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-43.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-44.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-45.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-46.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-47.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-48.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-49.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-50.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-51.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-52.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-53.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-54.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-55.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-56.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-57.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-58.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-59.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-60.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-61.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-62.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-63.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-64.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-65.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-66.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-67.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-68.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-69.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-70.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-71.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-72.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-73.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-74.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-75.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-76.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-77.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-78.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-79.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-80.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-81.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-82.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-83.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-84.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-85.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-86.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-87.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-88.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-89.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-90.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-91.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-92.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-93.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-94.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-95.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-96.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-97.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-98.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-99.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-100.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-101.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-102.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-103.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-104.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-105.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-106.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-107.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-108.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-109.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="svatba">
-      <img src="images/svatba-110.jpg" alt="Svatební focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
+  <div class="masonry" id="masonry-svatba">
+    <!-- fotky generuje JS -->
   </div>
 </div>
 
 <div class="section-divider"></div>
 
-<!-- ══════════════════════════════════════ -->
 <!-- SEKCE: RODINNÉ -->
-<!-- ══════════════════════════════════════ -->
-<div class="cat-section" id="sec-rodina" data-section="rodina">
+<div class="cat-section reveal" id="sec-rodina" data-section="rodina">
   <div class="cat-header">
     <h2 class="cat-title"><em>Rodinné</em> focení</h2>
     <p class="cat-desc">Přirozené momenty, radost a smích. Vaše rodina tak, jak ji znáte.</p>
   </div>
-  <div class="masonry">
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-01.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-02.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-03.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-04.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-05.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-06.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-07.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-08.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-09.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-10.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-11.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-12.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-13.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-14.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-15.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-16.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-17.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-18.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-19.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-20.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-21.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-22.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-23.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-24.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-25.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-26.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-27.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-28.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-29.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-30.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-31.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-32.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-33.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-34.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-35.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-36.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-37.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-38.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-39.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-40.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-41.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-42.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-43.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-44.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-46.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-49.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-51.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-53.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-55.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-58.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-59.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-60.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-61.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-62.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-63.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-64.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-65.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-66.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-67.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-68.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="rodina">
-      <img src="images/rodina-69.jpg" alt="Rodinné focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
+  <div class="masonry" id="masonry-rodina">
   </div>
 </div>
 
 <div class="section-divider"></div>
 
-<!-- ══════════════════════════════════════ -->
 <!-- SEKCE: TĚHOTENSKÉ -->
-<!-- ══════════════════════════════════════ -->
-<div class="cat-section" id="sec-tehotenstvi" data-section="tehotenstvi">
+<div class="cat-section reveal" id="sec-tehotenstvi" data-section="tehotenstvi">
   <div class="cat-header">
     <h2 class="cat-title"><em>Těhotenské</em> focení</h2>
     <p class="cat-desc">Jemné, přirozené. Krása čekání zachycená navždy.</p>
   </div>
-  <div class="masonry">
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-01.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-02.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-03.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-04.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-05.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-06.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-07.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-08.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-09.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-10.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-11.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-12.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-13.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-14.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-15.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-16.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-17.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-18.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-19.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-20.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-21.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-22.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-23.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-24.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-25.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-26.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-27.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-28.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-29.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-30.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-31.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-32.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-33.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-34.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-35.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-36.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-37.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-38.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-39.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-40.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-41.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-42.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-43.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-44.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-45.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-46.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-47.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-48.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-49.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-50.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-51.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-52.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-53.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-54.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-55.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-56.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-57.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-58.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-59.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-60.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-61.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-62.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-63.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-64.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-65.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-66.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-67.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-68.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-69.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-70.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-71.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-72.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-73.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-74.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-75.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-76.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-77.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-78.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-79.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-80.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-81.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-82.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-83.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-84.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-85.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-86.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-87.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-88.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-89.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-90.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-91.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-92.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="tehotenstvi">
-      <img src="images/tehotenstvi-93.jpg" alt="Těhotenské focení" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
+  <div class="masonry" id="masonry-tehotenstvi">
   </div>
 </div>
 
 <div class="section-divider"></div>
 
-<!-- ══════════════════════════════════════ -->
 <!-- SEKCE: PORTRÉTY -->
-<!-- ══════════════════════════════════════ -->
-<div class="cat-section" id="sec-portret" data-section="portret">
+<div class="cat-section reveal" id="sec-portret" data-section="portret">
   <div class="cat-header">
     <h2 class="cat-title"><em>Portréty</em></h2>
-    <p class="cat-desc">Osobní portréty, které zachycují charakter a osobnost každého člověka.</p>
+    <p class="cat-desc">Osobní portréty, které zachycují charakter každého člověka.</p>
   </div>
-  <div class="masonry">
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-01.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-02.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-03.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-04.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-05.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-06.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-07.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-08.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-09.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-10.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-11.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-12.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-13.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-14.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-15.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-16.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-17.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-18.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-19.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-20.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-21.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-22.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-23.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-24.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-25.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-26.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-27.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-28.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-29.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-30.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-31.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-32.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-33.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-34.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-35.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-36.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
-    <div class="m-item" data-cat="portret">
-      <img src="images/portret-37.jpg" alt="Portrét" loading="lazy">
-      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>
-    </div>
+  <div class="masonry" id="masonry-portret">
   </div>
 </div>
 
 <!-- CTA -->
 <div class="cta-strip">
+  <div class="cta-blob b1"></div>
+  <div class="cta-blob b2"></div>
   <h2>Zaujalo vás moje <em>portfolio?</em></h2>
   <p>Ozvěte se mi a společně zachytíme vaše nejkrásnější momenty.</p>
   <a href="index.html#kontakt" class="btn-white">Nezávazná poptávka</a>
@@ -1572,6 +454,7 @@ footer {
   <ul class="f-links">
     <li><a href="index.html#about">O mně</a></li>
     <li><a href="index.html#sluzby">Služby</a></li>
+    <li><a href="index.html#svatba">Ceník</a></li>
     <li><a href="galerie.html">Galerie</a></li>
     <li><a href="index.html#kontakt">Kontakt</a></li>
   </ul>
@@ -1597,58 +480,113 @@ footer {
 </div>
 
 <script>
-// ── Mobile nav
+// ── BLOB CANVAS
+const canvas = document.getElementById('blob-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+const blobs = [
+  { x: 0.1, y: 0.2, r: 0.15, phase: 0, color: 'rgba(139,94,60,0.06)' },
+  { x: 0.85, y: 0.35, r: 0.2, phase: 2, color: 'rgba(139,94,60,0.04)' },
+  { x: 0.5, y: 0.75, r: 0.14, phase: 4, color: 'rgba(176,125,82,0.05)' },
+  { x: 0.15, y: 0.8, r: 0.18, phase: 1, color: 'rgba(139,94,60,0.05)' },
+];
+function drawBlob(cx, cy, r, t, color) {
+  ctx.beginPath();
+  const pts = 8;
+  for (let i = 0; i <= pts * 2; i++) {
+    const angle = (i / pts) * Math.PI;
+    const wobble = r * (0.15 * Math.sin(t * 2 + i * 1.3) + 0.1 * Math.cos(t * 1.5 + i * 0.9));
+    const rad = r + wobble;
+    const x = cx + Math.cos(angle) * rad;
+    const y = cy + Math.sin(angle) * rad;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+let t = 0;
+function animateCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  t += 0.004;
+  blobs.forEach(b => {
+    const bx = b.x * canvas.width + Math.sin(t + b.phase) * 60;
+    const by = b.y * canvas.height + Math.cos(t * 0.8 + b.phase) * 50;
+    drawBlob(bx, by, b.r * Math.min(canvas.width, canvas.height), t + b.phase, b.color);
+  });
+  requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+
+// ── GENERATE GALLERY ITEMS
+const catConfig = [
+  { cat: 'svatba', count: 110, label: 'Svatební' },
+  { cat: 'rodina', count: 61, label: 'Rodinné' },
+  { cat: 'tehotenstvi', count: 93, label: 'Těhotenské' },
+  { cat: 'portret', count: 37, label: 'Portréty' },
+];
+
+const catLabels = { svatba: 'Svatební', rodina: 'Rodinné', tehotenstvi: 'Těhotenské', portret: 'Portréty' };
+let total = 0;
+
+catConfig.forEach(({ cat, count, label }) => {
+  total += count;
+  const el = document.getElementById(`cnt-${cat}`);
+  if (el) el.textContent = count;
+  const masonry = document.getElementById(`masonry-${cat}`);
+  if (!masonry) return;
+  for (let i = 1; i <= count; i++) {
+    const num = String(i).padStart(2, '0');
+    const div = document.createElement('div');
+    div.className = 'm-item';
+    div.dataset.cat = cat;
+    div.innerHTML = `
+      <img src="images/${cat}-${num}.jpg" alt="${label}" loading="lazy" style="border-radius:16px;">
+      <div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>`;
+    div.addEventListener('click', () => openLightbox(div));
+    masonry.appendChild(div);
+  }
+});
+document.getElementById('cnt-all').textContent = total;
+
+// ── MOBILE NAV
 document.getElementById('ham').addEventListener('click', () => document.body.classList.toggle('body-nav-open'));
 document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.body.classList.remove('body-nav-open')));
 
-// ── Category labels
-const catLabels = { svatba: 'Svatební', rodina: 'Rodinné', tehotenstvi: 'Těhotenské', portret: 'Portréty' };
+// ── FILTER
 const sections = ['svatba', 'rodina', 'tehotenstvi', 'portret'];
-
-// ── Count items per category and update badges
-sections.forEach(cat => {
-  const count = document.querySelectorAll(`.m-item[data-cat="${cat}"]`).length;
-  document.getElementById(`cnt-${cat}`).textContent = count;
-});
-const total = document.querySelectorAll('.m-item').length;
-document.getElementById('cnt-all').textContent = total;
-
-// ── Filter tabs
-document.querySelectorAll('.cat-btn').forEach(btn => {
+document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const filter = btn.dataset.cat;
-
+    const filter = btn.dataset.filter;
     sections.forEach(cat => {
       const sec = document.getElementById(`sec-${cat}`);
-      const divider = sec.nextElementSibling;
-      if (filter === 'all' || filter === cat) {
-        sec.removeAttribute('data-hidden');
-        if (divider && divider.classList.contains('section-divider')) divider.style.display = '';
-      } else {
-        sec.setAttribute('data-hidden', 'true');
-        if (divider && divider.classList.contains('section-divider')) divider.style.display = 'none';
-      }
+      const div = sec.nextElementSibling;
+      const show = filter === 'all' || filter === cat;
+      sec.dataset.hidden = show ? 'false' : 'true';
+      if (div && div.classList.contains('section-divider')) div.style.display = show ? '' : 'none';
     });
-
-    // Scroll to first visible section
-    const firstVisible = document.querySelector('.cat-section:not([data-hidden])');
-    if (firstVisible) {
-      const offset = firstVisible.getBoundingClientRect().top + window.scrollY - 130;
-      window.scrollTo({ top: offset, behavior: 'smooth' });
-    }
+    const first = document.querySelector('.cat-section:not([data-hidden="true"])');
+    if (first) window.scrollTo({ top: first.getBoundingClientRect().top + scrollY - 130, behavior: 'smooth' });
   });
 });
 
-// ── Lightbox
-let currentIdx = 0;
-let visibleItems = [];
+// ── SCROLL REVEAL
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// ── LIGHTBOX
+let currentIdx = 0, visibleItems = [];
 
 function getVisibleItems() {
-  return Array.from(document.querySelectorAll('.cat-section:not([data-hidden]) .m-item'));
+  return Array.from(document.querySelectorAll('.cat-section:not([data-hidden="true"]) .m-item'));
 }
-
 function openLightbox(item) {
   visibleItems = getVisibleItems();
   currentIdx = visibleItems.indexOf(item);
@@ -1656,44 +594,27 @@ function openLightbox(item) {
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function renderLightbox() {
   const item = visibleItems[currentIdx];
   const cat = item.dataset.cat;
   const img = item.querySelector('img');
   const content = document.getElementById('lbContent');
-
   if (img) {
     content.innerHTML = `<img class="lb-img" src="${img.src}" alt="${img.alt || ''}">`;
   } else {
-    content.innerHTML = `<div class="lb-ph"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="1.5"/></svg><p>Zde se zobrazí vaše fotografie</p></div>`;
+    content.innerHTML = `<div class="lb-ph"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="1.5"/></svg><p>Vaše fotografie</p></div>`;
   }
-
   document.getElementById('lbCat').textContent = catLabels[cat] || '';
   document.getElementById('lbCounter').textContent = `${currentIdx + 1} / ${visibleItems.length}`;
 }
-
 function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
   document.body.style.overflow = '';
 }
-
-document.querySelectorAll('.m-item').forEach(item => {
-  item.addEventListener('click', () => openLightbox(item));
-});
-
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
 document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
-
-document.getElementById('lbPrev').addEventListener('click', () => {
-  currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length;
-  renderLightbox();
-});
-document.getElementById('lbNext').addEventListener('click', () => {
-  currentIdx = (currentIdx + 1) % visibleItems.length;
-  renderLightbox();
-});
-
+document.getElementById('lbPrev').addEventListener('click', () => { currentIdx = (currentIdx - 1 + visibleItems.length) % visibleItems.length; renderLightbox(); });
+document.getElementById('lbNext').addEventListener('click', () => { currentIdx = (currentIdx + 1) % visibleItems.length; renderLightbox(); });
 document.addEventListener('keydown', e => {
   if (!document.getElementById('lightbox').classList.contains('open')) return;
   if (e.key === 'Escape') closeLightbox();
