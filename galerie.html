@@ -399,9 +399,12 @@ footer {
 
 .body-nav-open .nav-links {
   display: flex; flex-direction: column; position: fixed; inset: 0;
-  background: var(--bg); align-items: center; justify-content: center;
-  gap: 2rem; z-index: 99;
+  background: var(--bg);
+  align-items: center; justify-content: center;
+  gap: 2rem; z-index: 200;
 }
+.body-nav-open .nav-links a { font-size: 0.9rem; letter-spacing: 0.2em; }
+.body-nav-open .filter-bar { z-index: 0; }
 </style>
 </head>
 <body>
