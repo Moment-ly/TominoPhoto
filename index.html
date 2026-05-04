@@ -751,18 +751,63 @@ footer {
   .f-links { flex-wrap: wrap; justify-content: center; }
 }
 
-.body-nav-open .nav-links {
+.mobile-nav-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--bg);
   display: flex; flex-direction: column;
-  position: fixed; inset: 0; background: var(--bg);
   align-items: center; justify-content: center;
-  gap: 2rem; z-index: 99;
+  gap: 2.5rem;
+  transform: translateY(-100%);
+  transition: transform 0.6s cubic-bezier(0.76,0,0.24,1);
+  pointer-events: none;
 }
+.mobile-nav-overlay.open {
+  transform: translateY(0);
+  pointer-events: all;
+}
+.mobile-nav-overlay a {
+  font-family: var(--serif); font-size: 2rem; font-style: italic; font-weight: 300;
+  color: var(--dark); text-decoration: none;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease, color 0.25s;
+}
+.mobile-nav-overlay.open a { opacity: 1; transform: translateY(0); }
+.mobile-nav-overlay.open a:nth-child(2) { transition-delay: 0.15s; }
+.mobile-nav-overlay.open a:nth-child(4) { transition-delay: 0.22s; }
+.mobile-nav-overlay.open a:nth-child(6) { transition-delay: 0.29s; }
+.mobile-nav-overlay.open a:nth-child(8) { transition-delay: 0.36s; }
+.mobile-nav-overlay.open a:nth-child(10) { transition-delay: 0.43s; }
+.mobile-nav-overlay.open a:nth-child(12) { transition-delay: 0.50s; }
+.mobile-nav-overlay a:hover { color: var(--accent); }
+.mobile-nav-overlay .nav-close {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  background: none; border: none; cursor: pointer;
+  color: var(--dark); font-size: 1.5rem; line-height: 1; padding: 0.5rem;
+}
+.mobile-nav-divider { width: 40px; height: 1px; background: var(--border); }
+.body-nav-open .nav-links { display: none; }
 </style>
 </head>
 <body>
 
 
 
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="mobile-nav-overlay" id="mobileNav">
+  <button class="nav-close" id="navClose" aria-label="Zavřít">✕</button>
+  <a href="#about">O mně</a>
+  <div class="mobile-nav-divider"></div>
+  <a href="#sluzby">Služby</a>
+  <div class="mobile-nav-divider"></div>
+  <a href="#svatba">Ceník</a>
+  <div class="mobile-nav-divider"></div>
+  <a href="#galerie">Galerie</a>
+  <div class="mobile-nav-divider"></div>
+  <a href="#recenze">Recenze</a>
+  <div class="mobile-nav-divider"></div>
+  <a href="#kontakt" style="color:var(--accent);">Kontakt</a>
+</div>
 <!-- PROGRESS BAR -->
 <div id="progress-bar"></div>
 
@@ -1127,8 +1172,14 @@ if(aboutFrame && window.innerWidth > 960) {
 
 // ── NAV
 window.addEventListener('scroll', () => document.getElementById('nav').classList.toggle('scrolled', scrollY > 50));
-document.getElementById('ham').addEventListener('click', () => document.body.classList.toggle('body-nav-open'));
-document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => document.body.classList.remove('body-nav-open')));
+const mobileNav = document.getElementById('mobileNav');
+const ham = document.getElementById('ham');
+const navClose = document.getElementById('navClose');
+function openMobileNav() { mobileNav.classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMobileNav() { mobileNav.classList.remove('open'); document.body.style.overflow=''; }
+ham.addEventListener('click', openMobileNav);
+navClose.addEventListener('click', closeMobileNav);
+mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
 
 // ── SCROLL REVEAL (sr, sr-left, sr-stagger, sr-scale, section-reveal)
 const io = new IntersectionObserver(entries => {
