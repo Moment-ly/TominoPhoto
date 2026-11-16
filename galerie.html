@@ -269,7 +269,10 @@ footer {
   transition: opacity 0.3s;
 }
 #lightbox.open { opacity: 1; pointer-events: all; }
-.lb-img { max-width: 88vw; max-height: 88vh; object-fit: contain; display: block; border-radius: 12px; }
+#lightbox { touch-action: none; overscroll-behavior: contain; user-select: none; -webkit-user-select: none; }
+.lb-img { max-width: 88vw; max-height: 88vh; object-fit: contain; display: block; border-radius: 12px; will-change: transform; -webkit-user-drag: none; }
+.lb-img.zoomed { cursor: grab; }
+@media (max-width: 700px) { .lb-img { max-width: 96vw; max-height: 80vh; } }
 .lb-ph {
   width: 60vw; max-width: 640px; height: 70vh;
   background: #14201F; border-radius: 12px;
@@ -714,15 +717,15 @@ footer {
 </footer>
 
 <!-- LIGHTBOX -->
-<div id="lightbox">
-  <button class="lb-close" id="lbClose">
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Prohlížeč fotografií">
+  <button class="lb-close" id="lbClose" aria-label="Zavřít">
     <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
-  <button class="lb-prev" id="lbPrev">
+  <button class="lb-prev" id="lbPrev" aria-label="Předchozí fotka">
     <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M15 18l-6-6 6-6"/></svg>
   </button>
   <div id="lbContent"></div>
-  <button class="lb-next" id="lbNext">
+  <button class="lb-next" id="lbNext" aria-label="Další fotka">
     <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M9 18l6-6-6-6"/></svg>
   </button>
   <div class="lb-info">
@@ -837,36 +840,184 @@ document.querySelectorAll('.btn-white, .nav-cta').forEach(btn => {
   btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
 });
 
-// ── LIGHTBOX
-let currentIdx=0, visibleItems=[];
+// ── LIGHTBOX (swipe, pinch/double-tap zoom, plynulé přepínání)
+let currentIdx = 0, visibleItems = [], navToken = 0, lastFocus = null;
+const lb = document.getElementById('lightbox');
+const lbContent = document.getElementById('lbContent');
+let lbImg = null;
+let zs = 1, tx = 0, ty = 0;               // zoom + posun
+
 function getVisibleItems(){ return Array.from(document.querySelectorAll('.cat-section:not([data-hidden="true"]) .m-item')); }
+function applyT(animate){
+  if(!lbImg) return;
+  lbImg.style.transition = animate ? 'transform 0.25s ease, opacity 0.25s ease' : 'none';
+  lbImg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + zs + ')';
+  lbImg.classList.toggle('zoomed', zs > 1.01);
+}
+function clampT(){
+  if(zs <= 1){ tx = 0; ty = 0; return; }
+  const mx = Math.max(0, (lbImg.offsetWidth * zs - innerWidth) / 2);
+  const my = Math.max(0, (lbImg.offsetHeight * zs - innerHeight) / 2);
+  tx = Math.max(-mx, Math.min(mx, tx));
+  ty = Math.max(-my, Math.min(my, ty));
+}
+function resetZoom(animate){ zs = 1; tx = 0; ty = 0; applyT(animate); }
+
 function openLightbox(item){
-  visibleItems=getVisibleItems(); currentIdx=visibleItems.indexOf(item);
+  visibleItems = getVisibleItems(); currentIdx = visibleItems.indexOf(item);
+  lastFocus = document.activeElement;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
   renderLightbox();
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow='hidden';
+  document.getElementById('lbClose').focus({ preventScroll: true });
 }
-function renderLightbox(){
-  const item=visibleItems[currentIdx];
-  const cat=item.dataset.cat;
-  const img=item.querySelector('img');
-  const content=document.getElementById('lbContent');
-  if(img){ content.innerHTML=`<img class="lb-img" src="${img.src}" alt="${img.alt||''}">`; }
-  else { content.innerHTML=`<div class="lb-ph"><svg viewBox="0 0 64 64" fill="none"><rect x="6" y="14" width="52" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/><circle cx="32" cy="33" r="11" stroke="currentColor" stroke-width="1.5"/></svg><p>Vaše fotografie</p></div>`; }
-  document.getElementById('lbCat').textContent=catLabels[cat]||'';
-  document.getElementById('lbCounter').textContent=`${currentIdx+1} / ${visibleItems.length}`;
+function renderLightbox(dir){
+  const item = visibleItems[currentIdx];
+  const srcImg = item.querySelector('img');
+  const src = srcImg.src, alt = srcImg.alt || '';
+  if(!lbImg){
+    lbImg = document.createElement('img');
+    lbImg.className = 'lb-img'; lbImg.draggable = false;
+    lbContent.appendChild(lbImg);
+  }
+  const token = ++navToken;
+  const setSrc = () => { lbImg.src = src; lbImg.alt = alt; };
+  if(dir && lbImg.getAttribute('src')){
+    lbImg.style.transition = 'transform 0.16s ease-in, opacity 0.16s ease-in';
+    lbImg.style.transform = 'translate(' + (-dir * innerWidth * 0.3) + 'px,0) scale(1)';
+    lbImg.style.opacity = '0';
+    setTimeout(() => {
+      if(token !== navToken) return;
+      setSrc(); zs = 1; tx = 0; ty = 0; lbImg.classList.remove('zoomed');
+      lbImg.style.transition = 'none';
+      lbImg.style.transform = 'translate(' + (dir * innerWidth * 0.15) + 'px,0) scale(1)';
+      lbImg.style.opacity = '0';
+      void lbImg.offsetWidth;
+      lbImg.style.transition = 'transform 0.28s ease-out, opacity 0.28s ease-out';
+      lbImg.style.transform = 'translate(0,0) scale(1)';
+      lbImg.style.opacity = '1';
+    }, 160);
+  } else {
+    setSrc(); zs = 1; tx = 0; ty = 0;
+    lbImg.classList.remove('zoomed');
+    lbImg.style.transition = 'none'; lbImg.style.transform = ''; lbImg.style.opacity = '1';
+  }
+  document.getElementById('lbCat').textContent = catLabels[item.dataset.cat] || '';
+  document.getElementById('lbCounter').textContent = (currentIdx + 1) + ' / ' + visibleItems.length;
+  // přednačíst sousední fotky
+  [1, -1].forEach(d => {
+    const n = visibleItems[(currentIdx + d + visibleItems.length) % visibleItems.length];
+    if(n){ const im = new Image(); im.src = n.querySelector('img').src; }
+  });
 }
-function closeLightbox(){ document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow=''; }
+function go(dir){ currentIdx = (currentIdx + dir + visibleItems.length) % visibleItems.length; renderLightbox(dir); }
+function closeLightbox(){
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+  navToken++;
+  if(lbImg){ zs = 1; tx = 0; ty = 0; lbImg.style.transition = 'none'; lbImg.style.transform = ''; lbImg.style.opacity = '1'; lbImg.classList.remove('zoomed'); }
+  if(lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+}
+function toggleZoom(x, y){
+  if(zs > 1.01){ resetZoom(true); return; }
+  const px = x - innerWidth / 2, py = y - innerHeight / 2;
+  zs = 2.5; tx = -1.5 * px; ty = -1.5 * py; clampT(); applyT(true);
+}
+
 document.getElementById('lbClose').addEventListener('click', closeLightbox);
-document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target===document.getElementById('lightbox')) closeLightbox(); });
-document.getElementById('lbPrev').addEventListener('click', ()=>{ currentIdx=(currentIdx-1+visibleItems.length)%visibleItems.length; renderLightbox(); });
-document.getElementById('lbNext').addEventListener('click', ()=>{ currentIdx=(currentIdx+1)%visibleItems.length; renderLightbox(); });
-document.addEventListener('keydown', e=>{
-  if(!document.getElementById('lightbox').classList.contains('open')) return;
-  if(e.key==='Escape') closeLightbox();
-  if(e.key==='ArrowLeft'){ currentIdx=(currentIdx-1+visibleItems.length)%visibleItems.length; renderLightbox(); }
-  if(e.key==='ArrowRight'){ currentIdx=(currentIdx+1)%visibleItems.length; renderLightbox(); }
+document.getElementById('lbPrev').addEventListener('click', () => go(-1));
+document.getElementById('lbNext').addEventListener('click', () => go(1));
+document.addEventListener('keydown', e => {
+  if(!lb.classList.contains('open')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowLeft') go(-1);
+  if(e.key === 'ArrowRight') go(1);
 });
+
+// gesta: tah = přepnutí / zavření, štípnutí a dvojklepnutí = zoom, kolečko = zoom
+const ptrs = new Map();
+let g = null, lastTap = { t: 0, x: 0, y: 0 };
+lb.addEventListener('pointerdown', e => {
+  if(!lb.classList.contains('open') || e.target.closest('button') || !lbImg) return;
+  try { lb.setPointerCapture(e.pointerId); } catch(_) {}
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(ptrs.size === 1){
+    g = { mode: null, sx: e.clientX, sy: e.clientY, moved: false, tx0: tx, ty0: ty, lastX: e.clientX, lastT: performance.now(), vx: 0, onImg: e.target === lbImg };
+  } else if(ptrs.size === 2){
+    const [a, b] = Array.from(ptrs.values());
+    g = { mode: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, s0: zs, tx0: tx, ty0: ty, moved: true,
+          mid0: { x: (a.x + b.x) / 2 - innerWidth / 2, y: (a.y + b.y) / 2 - innerHeight / 2 } };
+    lbImg.style.opacity = '1';
+  }
+});
+lb.addEventListener('pointermove', e => {
+  if(!ptrs.has(e.pointerId) || !g) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(g.mode === 'pinch'){
+    if(ptrs.size < 2) return;
+    const [a, b] = Array.from(ptrs.values());
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    const ns = Math.max(1, Math.min(5, g.s0 * d / g.d0));
+    const mid = { x: (a.x + b.x) / 2 - innerWidth / 2, y: (a.y + b.y) / 2 - innerHeight / 2 };
+    const cx = (g.mid0.x - g.tx0) / g.s0, cy = (g.mid0.y - g.ty0) / g.s0;
+    zs = ns; tx = mid.x - cx * ns; ty = mid.y - cy * ns; clampT(); applyT(false);
+    return;
+  }
+  if(ptrs.size !== 1) return;
+  const dx = e.clientX - g.sx, dy = e.clientY - g.sy;
+  if(!g.moved && Math.hypot(dx, dy) > 6) g.moved = true;
+  const now = performance.now();
+  g.vx = (e.clientX - g.lastX) / (now - g.lastT || 1); g.lastX = e.clientX; g.lastT = now;
+  if(zs > 1.01){ tx = g.tx0 + dx; ty = g.ty0 + dy; clampT(); applyT(false); return; }
+  if(!g.mode && g.moved) g.mode = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+  if(g.mode === 'x'){ tx = dx; ty = 0; }
+  else if(g.mode === 'y'){ tx = 0; ty = dy > 0 ? dy : dy * 0.3; }
+  if(g.mode){
+    applyT(false);
+    lbImg.style.opacity = String(1 - Math.min(0.6, Math.hypot(tx, ty) / (innerWidth * 0.9)));
+  }
+});
+function endPtr(e){
+  if(!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if(!g) return;
+  if(g.mode === 'pinch'){
+    if(ptrs.size < 2){
+      if(zs < 1.05) resetZoom(true);
+      const rem = Array.from(ptrs.values())[0];
+      g = rem ? { mode: null, sx: rem.x, sy: rem.y, moved: true, tx0: tx, ty0: ty, lastX: rem.x, lastT: performance.now(), vx: 0, onImg: true } : null;
+    }
+    return;
+  }
+  if(ptrs.size > 0) return;
+  const gg = g; g = null;
+  const dx = e.clientX - gg.sx, dy = e.clientY - gg.sy;
+  if(!gg.moved){                                   // klepnutí
+    const now = performance.now();
+    if(now - lastTap.t < 300 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30){
+      toggleZoom(e.clientX, e.clientY); lastTap.t = 0;
+    } else {
+      lastTap = { t: now, x: e.clientX, y: e.clientY };
+      if(!gg.onImg && zs <= 1.01){ closeLightbox(); return; }   // klepnutí do pozadí zavře
+    }
+    return;
+  }
+  if(zs > 1.01) return;
+  if(gg.mode === 'x' && (Math.abs(dx) > 70 || (Math.abs(gg.vx) > 0.5 && Math.abs(dx) > 25))){ go(dx < 0 ? 1 : -1); return; }
+  if(gg.mode === 'y' && dy > 100){ closeLightbox(); return; }
+  tx = 0; ty = 0; applyT(true); lbImg.style.opacity = '1';   // vrátit zpět
+}
+lb.addEventListener('pointerup', endPtr);
+lb.addEventListener('pointercancel', endPtr);
+lb.addEventListener('wheel', e => {
+  if(!lb.classList.contains('open') || !lbImg) return;
+  e.preventDefault();
+  const px = e.clientX - innerWidth / 2, py = e.clientY - innerHeight / 2;
+  const cx = (px - tx) / zs, cy = (py - ty) / zs;
+  const ns = Math.max(1, Math.min(5, zs * Math.exp(-e.deltaY * 0.002)));
+  zs = ns; tx = px - cx * ns; ty = py - cy * ns; clampT(); applyT(false);
+}, { passive: false });
+window.addEventListener('resize', () => { if(lb.classList.contains('open')) resetZoom(false); });
 
 // ── OPONA: tah za provázek roztáhne závěs a odhalí kategorie
 (function(){
