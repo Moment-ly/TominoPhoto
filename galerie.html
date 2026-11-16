@@ -28,7 +28,7 @@
   --accent:   #2F5D62;
   --accent-lt:#4A8088;
   --accent-bg:#E7EFEF;
-  --muted:    #637477;
+  --muted:    #4F6366;
   --border:   rgba(47,93,98,0.12);
   --serif:    'Cormorant Garamond', Georgia, serif;
   --sans:     'Outfit', sans-serif;
@@ -91,7 +91,7 @@ nav {
 
 
 .header-tag {
-  font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
+  font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 1rem;
   display: flex; align-items: center; gap: 0.75rem;
 }
@@ -125,7 +125,7 @@ nav {
 .cat-title em { font-style: italic; color: var(--accent); }
 .cat-side { display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem; }
 .cat-desc { font-size: 0.78rem; color: var(--muted); max-width: 280px; text-align: right; line-height: 1.6; }
-.cat-back { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); text-decoration: none; transition: opacity 0.3s; }
+.cat-back { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); text-decoration: none; transition: opacity 0.3s; }
 .cat-back:hover { opacity: 0.6; }
 
 /* ── MASONRY ── */
@@ -158,7 +158,7 @@ nav {
 .m-ph.normal { padding: 3rem 1rem; }
 .m-ph.short  { padding: 1.75rem 1rem; }
 .m-ph svg { width: 26px; height: 26px; opacity: 0.4; }
-.m-ph span { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; }
+.m-ph span { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; }
 
 .m-overlay {
   position: absolute; inset: 0;
@@ -170,7 +170,7 @@ nav {
 }
 .m-item:hover .m-overlay { opacity: 1; }
 .m-lbl {
-  font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
+  font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
   color: rgba(255,255,255,0.9);
   border-bottom: 1px solid rgba(255,255,255,0.4);
   padding-bottom: 0.2rem;
@@ -221,9 +221,9 @@ footer {
 }
 .f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: #F6F9F9; }
 .f-links { display: flex; gap: 2rem; list-style: none; }
-.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(246,249,249,0.3); text-decoration: none; text-transform: uppercase; transition: color 0.25s; }
+.f-links a { font-size: 0.72rem; letter-spacing: 0.1em; color: rgba(246,249,249,0.3); text-decoration: none; text-transform: uppercase; transition: color 0.25s; }
 .f-links a:hover { color: var(--accent-lt); }
-.f-copy { font-size: 0.65rem; color: rgba(246,249,249,0.2); }
+.f-copy { font-size: 0.72rem; color: rgba(246,249,249,0.2); }
 
 /* ── LIGHTBOX ── */
 #lightbox {
@@ -272,8 +272,8 @@ footer {
   position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
 }
-.lb-cat { font-size: 0.58rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
-.lb-counter { font-size: 0.65rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); }
+.lb-cat { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); }
+.lb-counter { font-size: 0.72rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); }
 
 /* ── ANIMATIONS ── */
 @keyframes breathe { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.4); opacity:0.6; } }
@@ -294,10 +294,10 @@ footer {
 }
 .curtain-stage .gal-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
 .gal-top { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 6.5rem; margin-bottom: 2rem; }
-.gal-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--stage-lt); margin-bottom: 0.75rem; }
+.gal-tag { font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--stage-lt); margin-bottom: 0.75rem; }
 .gal-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 300; color: #EAF2F2; }
 .gal-h em { font-style: italic; color: var(--stage-lt); }
-.gal-link { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stage-lt); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: gap 0.3s; }
+.gal-link { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stage-lt); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: gap 0.3s; }
 .gal-link:hover { gap: 1rem; }
 
 .curtain-scene { position: relative; border-radius: 24px; overflow: hidden; background: #071012; }
@@ -322,7 +322,7 @@ footer {
 .cat-tile:focus-visible { outline: 2px solid var(--stage-lt); outline-offset: 2px; }
 .cat-label { position: absolute; left: 1.25rem; right: 1.25rem; bottom: 1.1rem; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.5rem; }
 .cat-name { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 1.7rem; line-height: 1; }
-.cat-num { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; white-space: nowrap; }
+.cat-num { font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; white-space: nowrap; }
 .is-armed .cat-tile { transform: scale(0.94); opacity: 0.4; transition: transform 1.1s cubic-bezier(0.2,0.8,0.2,1), opacity 1.1s ease; }
 .is-armed.is-open .cat-tile { transform: none; opacity: 1; }
 .is-armed.is-open .cat-tile:nth-child(1) { transition-delay: 0.45s; }
@@ -374,7 +374,7 @@ footer {
   display: inline-flex; align-items: center; gap: 0.55rem;
   background: none; border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.6);
   padding: 0.5rem 1rem; border-radius: 100px; cursor: pointer;
-  font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
   transition: all 0.3s;
 }
 .curtain-sound:hover, .curtain-sound[aria-pressed="true"] { border-color: var(--stage-lt); color: var(--stage-lt); }
@@ -469,7 +469,7 @@ footer {
 }
 .intro-sub {
   position: relative; z-index: 1;
-  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
   color: rgba(143,191,196,0); transition: color 0.5s ease;
 }
 #intro.leaving { pointer-events: none; }
