@@ -465,21 +465,16 @@ h2 em { font-style: italic; color: var(--accent); }
 
 /* ── LAMP STAGE (galerie se šňůrkou) ── */
 .lamp-stage {
-  --stage: #0D1D20; --stage-lt: #8FBFC4;
+  --stage: #234A50; --stage-lt: #8FBFC4;
   position: relative; overflow: hidden; isolation: isolate;
   background: var(--stage); padding: 0 3rem 4.5rem;
-}
-/* měkký přechod ze světlé sekce nad lampou do tmavé scény */
-.lamp-stage::before {
-  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 170px; z-index: 1; pointer-events: none;
-  background: linear-gradient(to bottom, #EDF3F3 0%, rgba(150,185,188,0.55) 28%, rgba(47,93,98,0.28) 58%, rgba(10,19,20,0) 100%);
 }
 .lamp-stage .gal-inner { position: relative; z-index: 2; }
 .lamp-stage .gal-tag, .lamp-stage .gal-link { color: var(--stage-lt); }
 .lamp-stage .gal-h { color: #EAF2F2; }
 .lamp-stage .gal-h em { color: var(--stage-lt); }
 .lamp-stage .gal-top { min-height: 250px; align-items: flex-end; margin-bottom: 2.5rem; }
-.lamp-stage .sg-item { background: #16262A; }
+.lamp-stage .sg-item { background: #1B3C41; }
 
 .lamp-glow {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
