@@ -25,12 +25,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #F6F9F9;
-  --bg-alt:   #EDF3F3;
+  --bg:       #E8F0F0;
+  --bg-alt:   #DDE9E9;
   --dark:     #0F1516;
   --accent:   #2F5D62;
   --accent-lt:#4A8088;
-  --accent-bg:#E7EFEF;
+  --accent-bg:#D3E3E4;
   --muted:    #637477;
   --border:   rgba(47,93,98,0.12);
   --serif:    'Cormorant Garamond', Georgia, serif;
@@ -401,6 +401,9 @@ h2 em { font-style: italic; color: var(--accent); }
 }
 .pkg-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 30px 60px rgba(47,93,98,0.12); }
 .pkg-card.best { border-color: var(--accent); background: rgba(255,255,255,0.9); }
+/* karty s reveal animací (.sr) si jinak přebíjely hover; zde se hover vrací všem třem */
+.pkg-card.sr { transition: opacity 0.9s cubic-bezier(0.23,1,0.32,1), transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s; }
+.pkg-card.sr.visible:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 30px 60px rgba(47,93,98,0.12); }
 
 .pkg-badge {
   position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
@@ -465,7 +468,7 @@ h2 em { font-style: italic; color: var(--accent); }
 
 /* ── LAMP STAGE (galerie se šňůrkou) ── */
 .lamp-stage {
-  --stage: #234A50; --stage-lt: #8FBFC4;
+  --stage: #0A1314; --stage-lt: #8FBFC4;
   position: relative; overflow: hidden; isolation: isolate;
   background: var(--stage); padding: 0 3rem 4.5rem;
 }
@@ -474,7 +477,7 @@ h2 em { font-style: italic; color: var(--accent); }
 .lamp-stage .gal-h { color: #EAF2F2; }
 .lamp-stage .gal-h em { color: var(--stage-lt); }
 .lamp-stage .gal-top { min-height: 250px; align-items: flex-end; margin-bottom: 2.5rem; }
-.lamp-stage .sg-item { background: #1B3C41; }
+.lamp-stage .sg-item { background: #16262A; }
 
 .lamp-glow {
   position: absolute; inset: 0; z-index: 0; pointer-events: none;
