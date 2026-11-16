@@ -687,12 +687,12 @@ footer {
 .intro-iris { position: absolute; inset: 0; z-index: 0; --u: max(100vw, 100vh); --px: calc(var(--u) * 0.64); overflow: hidden; }
 .iris-wrap { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 .iris-blade {
-  position: absolute; left: calc(var(--px) * -0.55); top: 0;
-  width: calc(var(--px) * 2.2); height: calc(var(--px) * 2);
+  position: absolute; left: calc(var(--px) * -1.0); top: calc(var(--px) * -0.035);
+  width: calc(var(--px) * 2.65); height: calc(var(--px) * 2.035);
   background: linear-gradient(160deg, #1A3035, #0A1314 60%);
   border-top: 1px solid rgba(143,191,196,0.45);
   box-shadow: 0 0 40px rgba(0,0,0,0.55);
-  transform-origin: calc(var(--px) * 1.55) 0; transform: rotate(0deg);
+  transform-origin: calc(var(--px) * 2.0) calc(var(--px) * 0.035); transform: rotate(0deg);
   transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s;
   will-change: transform; backface-visibility: hidden;
 }
@@ -724,7 +724,17 @@ footer {
 }
 #intro.leaving { pointer-events: none; }
 #intro.leaving .intro-logo, #intro.leaving .intro-line, #intro.leaving .intro-sub { opacity: 0; transition: opacity 0.35s ease; }
-#intro.leaving .iris-blade { transform: rotate(-72deg); }
+/* Hrany všech šesti lamel nad sebou — zavřená clona tak ukáže celou „větrníkovou" kresbu */
+.iris-edge {
+  position: absolute; left: calc(var(--px) * 0.0202); top: calc(var(--px) * -0.035);
+  width: calc(var(--px) * 1.63); height: 0; pointer-events: none;
+  border-top: 1px solid rgba(143,191,196,0.5);
+  box-shadow: 0 1px 10px rgba(0,0,0,0.45);
+  transform-origin: calc(var(--px) * 0.9798) calc(var(--px) * 0.035); transform: rotate(0deg);
+  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s;
+  will-change: transform; backface-visibility: hidden;
+}
+#intro.leaving .iris-blade, #intro.leaving .iris-edge { transform: rotate(-72deg); }
 @media (prefers-reduced-motion: reduce) { #intro { display: none !important; } }
 
 /* ── ENHANCED SR ── */
@@ -864,7 +874,7 @@ footer {
 
 <!-- INTRO LOADER -->
 <div id="intro">
-  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div></div>
+  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(0deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:6"><div class="iris-edge"></div></div></div>
   <div class="intro-logo" id="introLogo"></div>
   <div class="intro-line" id="introLine"></div>
   <div class="intro-sub" id="introSub">Fotograf · Praha & celá ČR</div>
