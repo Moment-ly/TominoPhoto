@@ -109,46 +109,8 @@ nav {
 .page-header h1 em { font-style: italic; color: var(--accent); }
 .page-header p { color: var(--muted); font-size: 0.92rem; line-height: 1.8; max-width: 480px; }
 
-/* ── FILTER TABS ── */
-.filter-bar {
-  position: sticky; top: 62px; z-index: 50;
-  background: rgba(246,249,249,0.97);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 3rem;
-  display: flex; gap: 0;
-  overflow-x: auto;
-}
-.filter-bar::-webkit-scrollbar { display: none; }
-.filter-btn {
-  background: none; border: none; border-bottom: 2px solid transparent;
-  color: var(--muted); padding: 1.1rem 1.5rem;
-  font-family: var(--sans); font-size: 0.72rem;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  cursor: pointer; transition: all 0.3s;
-  white-space: nowrap; font-weight: 300;
-  display: flex; align-items: center; gap: 0.6rem;
-  position: relative;
-}
-.filter-btn::after {
-  content: ''; position: absolute;
-  bottom: -2px; left: 0; right: 0;
-  height: 2px; background: var(--accent);
-  transform: scaleX(0); transform-origin: center;
-  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-}
-.filter-btn:hover { color: var(--accent); }
-.filter-btn.active { color: var(--accent); }
-.filter-btn.active::after { transform: scaleX(1); }
-.cat-count {
-  font-size: 0.58rem; background: var(--border);
-  color: var(--muted); padding: 0.15rem 0.5rem;
-  border-radius: 100px; transition: all 0.3s;
-}
-.filter-btn.active .cat-count { background: rgba(47,93,98,0.12); color: var(--accent); }
-
 /* ── CATEGORY SECTIONS ── */
-.cat-section { padding: 4rem 3rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+.cat-section { padding: 4rem 3rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; scroll-margin-top: 62px; }
 .cat-section[data-hidden="true"] { display: none; }
 
 .cat-header {
@@ -161,7 +123,10 @@ nav {
   font-weight: 300; color: var(--dark);
 }
 .cat-title em { font-style: italic; color: var(--accent); }
+.cat-side { display: flex; flex-direction: column; align-items: flex-end; gap: 0.6rem; }
 .cat-desc { font-size: 0.78rem; color: var(--muted); max-width: 280px; text-align: right; line-height: 1.6; }
+.cat-back { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); text-decoration: none; transition: opacity 0.3s; }
+.cat-back:hover { opacity: 0.6; }
 
 /* ── MASONRY ── */
 .masonry { columns: 3; column-gap: 10px; }
@@ -175,7 +140,7 @@ nav {
 .m-item:hover { transform: scale(1.02); z-index: 2; }
 
 .m-item img {
-  width: 100%; display: block;
+  width: 100%; height: auto; display: block;
   transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
   border-radius: 16px;
 }
@@ -427,11 +392,11 @@ footer {
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .page-header { padding: 7rem 1.5rem 3rem; }
-  .filter-bar { padding: 0 1rem; top: 57px; }
   .cat-section { padding: 3rem 1.5rem; }
   .masonry { columns: 2; column-gap: 8px; }
   .cat-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .cat-desc { text-align: left; }
+  .cat-side { align-items: flex-start; }
   .section-divider { margin: 0 1.5rem; }
   .cta-strip { padding: 4rem 1.5rem; }
   footer { flex-direction: column; text-align: center; }
@@ -455,14 +420,20 @@ footer {
   display: flex; align-items: center; justify-content: center;
   flex-direction: column; gap: 2rem;
 }
-.intro-iris { position: absolute; inset: 0; width: 100%; height: 100%; }
-.iris-hex, .iris-lines {
-  transform-origin: 0 0; transform: rotate(0deg) scale(0.0001);
-  transition: transform 1.35s cubic-bezier(0.65,0,0.2,1) 0.2s;
+.intro-iris { position: absolute; inset: 0; z-index: 0; --u: max(100vw, 100vh); --px: calc(var(--u) * 0.64); overflow: hidden; }
+.iris-wrap { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+.iris-blade {
+  position: absolute; left: calc(var(--px) * -0.55); top: 0;
+  width: calc(var(--px) * 2.2); height: calc(var(--px) * 2);
+  background: linear-gradient(160deg, #1A3035, #0A1314 60%);
+  border-top: 1px solid rgba(143,191,196,0.45);
+  box-shadow: 0 0 40px rgba(0,0,0,0.55);
+  transform-origin: calc(var(--px) * 1.55) 0; transform: rotate(0deg);
+  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s;
+  will-change: transform; backface-visibility: hidden;
 }
-.iris-lines line { stroke: rgba(143,191,196,0.28); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .intro-logo {
-  position: relative;
+  position: relative; z-index: 1;
   font-family: var(--serif); font-size: clamp(2.5rem,6vw,5rem);
   font-style: italic; font-weight: 300;
   color: #EAF2F2; letter-spacing: 0.05em;
@@ -476,20 +447,20 @@ footer {
 }
 .intro-char.space { width: 0.3em; }
 .intro-line {
-  position: relative;
+  position: relative; z-index: 1;
   width: 0px; height: 1px;
   background: #8FBFC4;
   transition: width 1s cubic-bezier(0.76,0,0.24,1);
   margin-top: -0.5rem;
 }
 .intro-sub {
-  position: relative;
+  position: relative; z-index: 1;
   font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
   color: rgba(143,191,196,0); transition: color 0.5s ease;
 }
 #intro.leaving { pointer-events: none; }
 #intro.leaving .intro-logo, #intro.leaving .intro-line, #intro.leaving .intro-sub { opacity: 0; transition: opacity 0.35s ease; }
-#intro.leaving .iris-hex, #intro.leaving .iris-lines { transform: rotate(60deg) scale(90); }
+#intro.leaving .iris-blade { transform: rotate(-72deg); }
 @media (prefers-reduced-motion: reduce) { #intro { display: none !important; } }
 
 /* ── STAGGER ── */
@@ -565,16 +536,7 @@ footer {
 
 <!-- INTRO LOADER -->
 <div id="intro">
-  <svg class="intro-iris" viewBox="-50 -50 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs>
-      <mask id="irisMask" maskUnits="userSpaceOnUse" x="-300" y="-300" width="600" height="600">
-        <rect x="-300" y="-300" width="600" height="600" fill="#fff"/>
-        <polygon class="iris-hex" points="1.0000,0.0000 0.5000,0.8660 -0.5000,0.8660 -1.0000,0.0000 -0.5000,-0.8660 0.5000,-0.8660" fill="#000"/>
-      </mask>
-    </defs>
-    <rect x="-300" y="-300" width="600" height="600" fill="#0A1314" mask="url(#irisMask)"/>
-    <g class="iris-lines"><line x1="2.0000" y1="-1.7321" x2="-0.5000" y2="2.5981"/><line x1="2.5000" y1="0.8660" x2="-2.5000" y2="0.8660"/><line x1="0.5000" y1="2.5981" x2="-2.0000" y2="-1.7321"/><line x1="-2.0000" y1="1.7321" x2="0.5000" y2="-2.5981"/><line x1="-2.5000" y1="-0.8660" x2="2.5000" y2="-0.8660"/><line x1="-0.5000" y1="-2.5981" x2="2.0000" y2="1.7321"/></g>
-  </svg>
+  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div></div>
   <div class="intro-logo" id="introLogo"></div>
   <div class="intro-line" id="introLine"></div>
   <div class="intro-sub" id="introSub">Galerie · Portfolio</div>
@@ -609,7 +571,7 @@ footer {
   <div class="gal-inner">
     <div class="gal-top">
       <div><div class="gal-tag">Vyberte si příběh</div><h2 class="gal-h">Odhrňte <em>oponu</em></h2></div>
-      <a href="#filterBar" class="gal-link">Všechny fotky <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+      <a href="#sec-svatba" class="gal-link">Všechny fotky <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
     <div class="curtain-scene" data-curtain>
       <div class="cat-grid">
@@ -640,20 +602,14 @@ footer {
   </div>
 </section>
 
-<!-- FILTER TABS -->
-<div class="filter-bar sr-stagger" id="filterBar">
-  <button class="filter-btn active" data-filter="all">Vše <span class="cat-count" id="cnt-all">0</span></button>
-  <button class="filter-btn" data-filter="svatba">Svatba <span class="cat-count" id="cnt-svatba">0</span></button>
-  <button class="filter-btn" data-filter="rodina">Rodinné <span class="cat-count" id="cnt-rodina">0</span></button>
-  <button class="filter-btn" data-filter="tehotenstvi">Těhotenské <span class="cat-count" id="cnt-tehotenstvi">0</span></button>
-  <button class="filter-btn" data-filter="portret">Portréty <span class="cat-count" id="cnt-portret">0</span></button>
-</div>
-
 <!-- SEKCE: SVATBA -->
 <div class="cat-section reveal" id="sec-svatba" data-section="svatba">
   <div class="cat-header">
     <h2 class="cat-title"><em>Svatební</em> focení</h2>
-    <p class="cat-desc">Od ranních příprav po poslední tanec. Každý záběr s citem pro váš příběh.</p>
+    <div class="cat-side">
+      <p class="cat-desc">Od ranních příprav po poslední tanec. Každý záběr s citem pro váš příběh.</p>
+      <a class="cat-back" href="#opona">↑ Zpět na výběr</a>
+    </div>
   </div>
   <div class="masonry" id="masonry-svatba">
     <!-- fotky generuje JS -->
@@ -666,7 +622,10 @@ footer {
 <div class="cat-section reveal" id="sec-rodina" data-section="rodina">
   <div class="cat-header">
     <h2 class="cat-title"><em>Rodinné</em> focení</h2>
-    <p class="cat-desc">Přirozené momenty, radost a smích. Vaše rodina tak, jak ji znáte.</p>
+    <div class="cat-side">
+      <p class="cat-desc">Přirozené momenty, radost a smích. Vaše rodina tak, jak ji znáte.</p>
+      <a class="cat-back" href="#opona">↑ Zpět na výběr</a>
+    </div>
   </div>
   <div class="masonry" id="masonry-rodina">
   </div>
@@ -678,7 +637,10 @@ footer {
 <div class="cat-section reveal" id="sec-tehotenstvi" data-section="tehotenstvi">
   <div class="cat-header">
     <h2 class="cat-title"><em>Těhotenské</em> focení</h2>
-    <p class="cat-desc">Jemné, přirozené. Krása čekání zachycená navždy.</p>
+    <div class="cat-side">
+      <p class="cat-desc">Jemné, přirozené. Krása čekání zachycená navždy.</p>
+      <a class="cat-back" href="#opona">↑ Zpět na výběr</a>
+    </div>
   </div>
   <div class="masonry" id="masonry-tehotenstvi">
   </div>
@@ -690,7 +652,10 @@ footer {
 <div class="cat-section reveal" id="sec-portret" data-section="portret">
   <div class="cat-header">
     <h2 class="cat-title"><em>Portréty</em></h2>
-    <p class="cat-desc">Osobní portréty, které zachycují charakter každého člověka.</p>
+    <div class="cat-side">
+      <p class="cat-desc">Osobní portréty, které zachycují charakter každého člověka.</p>
+      <a class="cat-back" href="#opona">↑ Zpět na výběr</a>
+    </div>
   </div>
   <div class="masonry" id="masonry-portret">
   </div>
@@ -773,13 +738,12 @@ const catConfig = [
   { cat:'tehotenstvi', count:93,  label:'Těhotenské' },
   { cat:'portret',     count:37,  label:'Portréty' },
 ];
+const IMG_SIZES = {"portret-01":[1200,801],"portret-02":[1200,1799],"portret-03":[1920,1920],"portret-04":[1920,1281],"portret-05":[1200,801],"portret-06":[1920,1281],"portret-07":[1200,801],"portret-08":[1920,2879],"portret-09":[1920,1281],"portret-10":[1920,1281],"portret-11":[1920,1281],"portret-12":[1920,1281],"portret-13":[1920,1281],"portret-14":[1920,2878],"portret-15":[1920,1281],"portret-16":[1920,1281],"portret-17":[1920,1281],"portret-18":[1920,1281],"portret-19":[1920,2877],"portret-20":[1920,1281],"portret-21":[1920,1281],"portret-22":[1920,1281],"portret-23":[1920,1281],"portret-24":[1920,1281],"portret-25":[1920,1281],"portret-26":[1920,1281],"portret-27":[1920,1281],"portret-28":[1920,2879],"portret-29":[1920,2879],"portret-30":[1920,1281],"portret-31":[1920,1281],"portret-32":[1920,1281],"portret-33":[1920,2879],"portret-34":[1920,2879],"portret-35":[1920,1281],"portret-36":[1920,1281],"portret-37":[1920,1281],"rodina-01":[1920,2880],"rodina-02":[1920,2880],"rodina-03":[1920,2879],"rodina-04":[1920,2879],"rodina-05":[1920,1280],"rodina-06":[1920,2879],"rodina-07":[1920,2880],"rodina-08":[1920,1280],"rodina-09":[1920,2879],"rodina-10":[1920,2880],"rodina-11":[1920,1280],"rodina-12":[1920,1280],"rodina-13":[1920,1281],"rodina-14":[1920,1280],"rodina-15":[1920,1280],"rodina-16":[1920,1280],"rodina-17":[1920,1280],"rodina-18":[1920,2879],"rodina-19":[1920,1134],"rodina-20":[1920,1280],"rodina-21":[1920,1280],"rodina-22":[1920,2880],"rodina-23":[1920,2880],"rodina-24":[1920,1281],"rodina-25":[1920,1280],"rodina-26":[1920,2880],"rodina-27":[1920,1280],"rodina-28":[1920,2880],"rodina-29":[1920,1280],"rodina-30":[1920,2880],"rodina-31":[1920,1280],"rodina-32":[1920,2880],"rodina-33":[1200,800],"rodina-34":[1920,1281],"rodina-35":[1920,1280],"rodina-36":[1920,1280],"rodina-37":[1200,1834],"rodina-38":[1920,2934],"rodina-39":[1200,1800],"rodina-40":[1920,1281],"rodina-41":[1920,2880],"rodina-42":[1920,1281],"rodina-43":[1920,1280],"rodina-44":[1920,1281],"rodina-46":[1920,1281],"rodina-49":[1920,1280],"rodina-51":[1920,1281],"rodina-53":[1920,1281],"rodina-55":[1920,2878],"rodina-58":[1920,1281],"rodina-59":[1920,1281],"rodina-60":[1920,1281],"rodina-61":[1920,2879],"rodina-62":[1920,1281],"rodina-63":[1920,1281],"rodina-64":[1920,1281],"rodina-65":[1920,1281],"rodina-66":[1920,1281],"rodina-67":[1920,1281],"rodina-68":[1920,2880],"rodina-69":[1920,1281],"svatba-01":[1920,2880],"svatba-02":[1920,1281],"svatba-03":[1920,1280],"svatba-04":[1920,1280],"svatba-05":[1920,1280],"svatba-06":[1920,2879],"svatba-07":[1920,1280],"svatba-08":[1920,1281],"svatba-09":[1920,2880],"svatba-10":[1920,1281],"svatba-100":[1920,1280],"svatba-101":[1920,1281],"svatba-102":[1920,1280],"svatba-103":[1920,1280],"svatba-104":[1920,1280],"svatba-105":[1920,2880],"svatba-106":[1920,1280],"svatba-107":[1920,1280],"svatba-108":[1920,1280],"svatba-109":[1920,2880],"svatba-11":[1920,2880],"svatba-110":[1920,1280],"svatba-12":[1920,1280],"svatba-13":[1920,1280],"svatba-14":[1920,2879],"svatba-15":[1920,2880],"svatba-16":[1920,1281],"svatba-17":[1920,2880],"svatba-18":[1920,1281],"svatba-19":[1920,2880],"svatba-20":[1920,1280],"svatba-21":[1920,2879],"svatba-22":[1920,1280],"svatba-23":[1920,2879],"svatba-24":[1920,2880],"svatba-25":[1920,2879],"svatba-26":[1920,2878],"svatba-27":[1920,2878],"svatba-28":[1920,2878],"svatba-29":[1920,2880],"svatba-30":[1920,1280],"svatba-31":[1920,1281],"svatba-32":[1920,1280],"svatba-33":[1920,2880],"svatba-34":[1920,2880],"svatba-35":[1920,1280],"svatba-36":[1920,1281],"svatba-37":[1920,2880],"svatba-38":[1920,1280],"svatba-39":[1920,1280],"svatba-40":[1920,1280],"svatba-41":[1920,1280],"svatba-42":[1920,1280],"svatba-43":[1920,1280],"svatba-44":[1920,1280],"svatba-45":[1920,1280],"svatba-46":[1920,1280],"svatba-47":[1920,1280],"svatba-48":[1920,1280],"svatba-49":[1920,1280],"svatba-50":[1920,1281],"svatba-51":[1920,1280],"svatba-52":[1920,1280],"svatba-53":[1920,1281],"svatba-54":[1920,1280],"svatba-55":[1920,2880],"svatba-56":[1920,1281],"svatba-57":[1920,1280],"svatba-58":[1920,1280],"svatba-59":[1920,1281],"svatba-60":[1920,1280],"svatba-61":[1920,1280],"svatba-62":[1920,2880],"svatba-63":[1920,2880],"svatba-64":[1920,1280],"svatba-65":[1920,1280],"svatba-66":[1920,1280],"svatba-67":[1920,1280],"svatba-68":[1920,1281],"svatba-69":[1920,1280],"svatba-70":[1920,2880],"svatba-71":[1920,1280],"svatba-72":[1920,1280],"svatba-73":[1920,2879],"svatba-74":[1920,1280],"svatba-75":[1920,1280],"svatba-76":[1920,1280],"svatba-77":[1920,2880],"svatba-78":[1920,2880],"svatba-79":[1920,1280],"svatba-80":[1920,2880],"svatba-81":[1920,1280],"svatba-82":[1920,1280],"svatba-83":[1920,1325],"svatba-84":[1920,1280],"svatba-85":[1920,1280],"svatba-86":[1920,1281],"svatba-87":[1920,1280],"svatba-88":[1920,1281],"svatba-89":[1920,1280],"svatba-90":[1920,2880],"svatba-91":[1920,1280],"svatba-92":[1920,2879],"svatba-93":[1920,1280],"svatba-94":[1920,2880],"svatba-95":[1920,1280],"svatba-96":[1920,1280],"svatba-97":[1920,2879],"svatba-98":[1920,2880],"svatba-99":[1920,2880],"tehotenstvi-01":[1920,1280],"tehotenstvi-02":[1280,1920],"tehotenstvi-03":[1280,1920],"tehotenstvi-04":[1280,1920],"tehotenstvi-05":[1280,1920],"tehotenstvi-06":[1280,1920],"tehotenstvi-07":[1920,1280],"tehotenstvi-08":[1920,1280],"tehotenstvi-09":[1920,1280],"tehotenstvi-10":[1280,1920],"tehotenstvi-11":[1920,1280],"tehotenstvi-12":[1280,1920],"tehotenstvi-13":[1280,1920],"tehotenstvi-14":[1920,1280],"tehotenstvi-15":[1920,1280],"tehotenstvi-16":[1920,2878],"tehotenstvi-17":[1920,2879],"tehotenstvi-18":[1920,2879],"tehotenstvi-19":[1920,2878],"tehotenstvi-20":[1920,1281],"tehotenstvi-21":[1920,1281],"tehotenstvi-22":[1920,1281],"tehotenstvi-23":[1920,1281],"tehotenstvi-24":[1920,1280],"tehotenstvi-25":[1920,2880],"tehotenstvi-26":[1920,1280],"tehotenstvi-27":[1920,1280],"tehotenstvi-28":[1920,1280],"tehotenstvi-29":[1920,1280],"tehotenstvi-30":[1920,1281],"tehotenstvi-31":[1920,1280],"tehotenstvi-32":[1920,2880],"tehotenstvi-33":[1920,1280],"tehotenstvi-34":[1920,1280],"tehotenstvi-35":[1920,1280],"tehotenstvi-36":[1920,1280],"tehotenstvi-37":[1920,1280],"tehotenstvi-38":[1920,2879],"tehotenstvi-39":[1366,2048],"tehotenstvi-40":[1920,1280],"tehotenstvi-41":[1920,1280],"tehotenstvi-42":[1920,1281],"tehotenstvi-43":[1920,1280],"tehotenstvi-44":[1920,2880],"tehotenstvi-45":[1920,2879],"tehotenstvi-46":[1920,1280],"tehotenstvi-47":[1920,1281],"tehotenstvi-48":[1920,2880],"tehotenstvi-49":[1920,1281],"tehotenstvi-50":[1920,2879],"tehotenstvi-51":[1920,2880],"tehotenstvi-52":[1920,1920],"tehotenstvi-53":[1920,2878],"tehotenstvi-54":[1920,1280],"tehotenstvi-55":[1920,1280],"tehotenstvi-56":[1920,2879],"tehotenstvi-57":[1920,1280],"tehotenstvi-58":[1920,2879],"tehotenstvi-59":[1920,1280],"tehotenstvi-60":[1920,2879],"tehotenstvi-61":[1920,1281],"tehotenstvi-62":[1366,2048],"tehotenstvi-63":[1920,2879],"tehotenstvi-64":[1920,1280],"tehotenstvi-65":[1920,2879],"tehotenstvi-66":[1920,2878],"tehotenstvi-67":[1920,1280],"tehotenstvi-68":[1920,1280],"tehotenstvi-69":[1920,1281],"tehotenstvi-70":[1920,2879],"tehotenstvi-71":[1920,2879],"tehotenstvi-72":[1920,2880],"tehotenstvi-73":[1920,2879],"tehotenstvi-74":[1920,1280],"tehotenstvi-75":[1920,2879],"tehotenstvi-76":[1920,1281],"tehotenstvi-77":[1920,1280],"tehotenstvi-78":[1920,2879],"tehotenstvi-79":[1920,2879],"tehotenstvi-80":[1920,2879],"tehotenstvi-81":[1920,2878],"tehotenstvi-82":[1920,2879],"tehotenstvi-83":[1920,2879],"tehotenstvi-84":[1920,1281],"tehotenstvi-85":[1920,1281],"tehotenstvi-86":[1920,2879],"tehotenstvi-87":[1920,2879],"tehotenstvi-88":[1920,1281],"tehotenstvi-89":[1920,2879],"tehotenstvi-90":[1920,2878],"tehotenstvi-91":[1920,1281],"tehotenstvi-92":[1920,1281],"tehotenstvi-93":[1920,1281]};
 const catLabels = { svatba:'Svatební', rodina:'Rodinné', tehotenstvi:'Těhotenské', portret:'Portréty' };
 let total = 0;
 
 catConfig.forEach(({ cat, count, label }) => {
   total += count;
-  const el = document.getElementById(`cnt-${cat}`);
-  if(el) el.textContent = count;
   const masonry = document.getElementById(`masonry-${cat}`);
   if(!masonry) return;
   for(let i=1; i<=count; i++){
@@ -787,12 +751,12 @@ catConfig.forEach(({ cat, count, label }) => {
     const div = document.createElement('div');
     div.className = 'm-item';
     div.dataset.cat = cat;
-    div.innerHTML = `<img src="images/${cat}-${num}.jpg" alt="${label}" loading="lazy" style="border-radius:16px;"><div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>`;
+    const sz = IMG_SIZES[`${cat}-${num}`] || [2,3];
+    div.innerHTML = `<img src="images/${cat}-${num}.jpg" alt="${label}" width="${sz[0]}" height="${sz[1]}" loading="lazy" decoding="async" style="border-radius:16px;"><div class="m-overlay"><span class="m-lbl">Zobrazit</span></div>`;
     div.addEventListener('click', () => openLightbox(div));
     masonry.appendChild(div);
   }
 });
-document.getElementById('cnt-all').textContent = total;
 
 // ── MOBILE NAV
 const mobileNav = document.getElementById('mobileNav');
@@ -804,30 +768,15 @@ ham.addEventListener('click', openMobileNav);
 navClose.addEventListener('click', closeMobileNav);
 mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
 
-// ── FILTER
-const sections = ['svatba','rodina','tehotenstvi','portret'];
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    const filter = btn.dataset.filter;
-    sections.forEach(cat => {
-      const sec = document.getElementById(`sec-${cat}`);
-      const divider = sec.nextElementSibling;
-      const show = filter==='all' || filter===cat;
-      sec.dataset.hidden = show ? 'false' : 'true';
-      if(divider && divider.classList.contains('section-divider')) divider.style.display = show ? '' : 'none';
-    });
-    const first = document.querySelector('.cat-section:not([data-hidden="true"])');
-    if(first) window.scrollTo({ top: first.getBoundingClientRect().top + scrollY - 130, behavior:'smooth' });
-  });
-});
-
 // ── SCROLL REVEAL
 const io = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
 }, { threshold: 0.08 });
-document.querySelectorAll('.reveal, .sr-stagger').forEach(el => io.observe(el));
+// obří sekce galerie: 8 % jejich výšky se na displeji nikdy nevejde, stačí aby se jen dotkly obrazovky
+const ioBig = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); ioBig.unobserve(e.target); } });
+}, { threshold: 0 });
+document.querySelectorAll('.reveal, .sr-stagger').forEach(el => (el.classList.contains('cat-section') ? ioBig : io).observe(el));
 
 // ── MAGNETIC on CTA button
 document.querySelectorAll('.btn-white, .nav-cta').forEach(btn => {
@@ -1075,12 +1024,7 @@ window.addEventListener('resize', () => { if(lb.classList.contains('open')) rese
   // klepnutí na závěs ho taky otevře
   scene.querySelectorAll('.curtain').forEach(c => c.addEventListener('click', () => { if(!open) setOpen(true); }));
 
-  // klik na kategorii = filtr + skok do galerie
-  tiles.forEach(t => t.addEventListener('click', e => {
-    e.preventDefault();
-    const btn = document.querySelector('.filter-btn[data-filter="' + t.dataset.filter + '"]');
-    if(btn) btn.click();
-  }));
+  // klik na kategorii = plynulý skok na danou sekci (obyčejná kotva)
 
   // pojistka: když nikdo nezatáhne, po 10 s v záběru se závěs otevře sám
   let autoT = null;
