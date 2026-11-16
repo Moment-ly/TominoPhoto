@@ -429,7 +429,7 @@ footer {
   border-top: 1px solid transparent;
   box-shadow: 0 0 40px rgba(0,0,0,0.55);
   transform-origin: calc(var(--px) * 2.0) calc(var(--px) * 0.006); transform: rotate(0deg);
-  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s, border-color 0.4s ease 0.15s;
+  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s;
   will-change: transform; backface-visibility: hidden;
 }
 .intro-logo {
@@ -460,8 +460,8 @@ footer {
 }
 #intro.leaving { pointer-events: none; }
 #intro.leaving .intro-logo, #intro.leaving .intro-line, #intro.leaving .intro-sub { opacity: 0; transition: opacity 0.35s ease; }
-#intro.leaving .iris-blade { transform: rotate(-72deg); border-top-color: rgba(143,191,196,0.45); }
-.iris-hairs { position: absolute; inset: 0; z-index: 6; pointer-events: none; transition: opacity 0.25s ease-out; }
+#intro.leaving .iris-blade { transform: rotate(-72deg); }
+.iris-hairs { position: absolute; inset: 0; z-index: 6; pointer-events: none; transition: opacity 0.25s ease-out; will-change: opacity; }
 .iris-hair { position: absolute; left: 0; top: calc(var(--px) * -0.006); width: calc(var(--u) * 0.8); height: 1px; background: rgba(160,205,210,0.55); }
 #intro.leaving .iris-hairs { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { #intro { display: none !important; } }
