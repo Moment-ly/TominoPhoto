@@ -13,14 +13,14 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:       #FAFAF8;
-  --bg-alt:   #F3EDE4;
-  --dark:     #111110;
-  --accent:   #8B5E3C;
-  --accent-lt:#B07D52;
-  --accent-bg:#F5EDE2;
-  --muted:    #9A9590;
-  --border:   rgba(139,94,60,0.12);
+  --bg:       #F6F9F9;
+  --bg-alt:   #EDF3F3;
+  --dark:     #0F1516;
+  --accent:   #2F5D62;
+  --accent-lt:#4A8088;
+  --accent-bg:#E7EFEF;
+  --muted:    #637477;
+  --border:   rgba(47,93,98,0.12);
   --serif:    'Cormorant Garamond', Georgia, serif;
   --sans:     'Outfit', sans-serif;
 }
@@ -28,11 +28,11 @@
 html { scroll-behavior: smooth; }
 body { font-family: var(--sans); background: var(--bg); color: var(--dark); font-weight: 300; overflow-x: hidden; }
 
-/* ── BLOB CANVAS ── */
-#blob-canvas {
-  position: fixed; inset: 0;
-  pointer-events: none; z-index: 0;
-  opacity: 0.5;
+
+/* ── GRAIN (jemné SVG zrno) ── */
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* ── NAV ── */
@@ -40,7 +40,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 1.1rem 3rem;
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(250,250,248,0.95);
+  background: rgba(246,249,249,0.95);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
@@ -80,14 +80,6 @@ nav {
 }
 .header-inner { max-width: 1200px; margin: 0 auto; }
 
-.header-blob {
-  position: absolute; width: 500px; height: 500px;
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  background: var(--accent-bg);
-  opacity: 0.5; pointer-events: none;
-  top: -100px; right: -100px;
-  animation: blob 15s ease-in-out infinite;
-}
 
 .header-tag {
   font-size: 0.62rem; letter-spacing: 0.3em; text-transform: uppercase;
@@ -111,7 +103,7 @@ nav {
 /* ── FILTER TABS ── */
 .filter-bar {
   position: sticky; top: 62px; z-index: 50;
-  background: rgba(250,250,248,0.97);
+  background: rgba(246,249,249,0.97);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 0 3rem;
@@ -144,7 +136,7 @@ nav {
   color: var(--muted); padding: 0.15rem 0.5rem;
   border-radius: 100px; transition: all 0.3s;
 }
-.filter-btn.active .cat-count { background: rgba(139,94,60,0.12); color: var(--accent); }
+.filter-btn.active .cat-count { background: rgba(47,93,98,0.12); color: var(--accent); }
 
 /* ── CATEGORY SECTIONS ── */
 .cat-section { padding: 4rem 3rem; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
@@ -182,10 +174,10 @@ nav {
 
 .m-ph {
   width: 100%;
-  background: linear-gradient(135deg, #EDE6DB 0%, #D8D0C4 100%);
+  background: linear-gradient(135deg, #E4ECEC 0%, #D0DCDC 100%);
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 0.6rem; color: rgba(139,94,60,0.3);
+  gap: 0.6rem; color: rgba(47,93,98,0.3);
   border-radius: 16px;
 }
 .m-ph.tall   { padding: 5rem 1rem; }
@@ -196,7 +188,7 @@ nav {
 
 .m-overlay {
   position: absolute; inset: 0;
-  background: rgba(139,94,60,0.5);
+  background: rgba(47,93,98,0.5);
   border-radius: 16px;
   display: flex; align-items: flex-end;
   padding: 1.25rem;
@@ -222,15 +214,6 @@ nav {
   padding: 6rem 3rem; text-align: center;
   position: relative; overflow: hidden; margin-top: 4rem;
 }
-.cta-blob {
-  position: absolute; width: 400px; height: 400px;
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  background: rgba(255,255,255,0.08);
-  animation: blob 12s ease-in-out infinite;
-  pointer-events: none;
-}
-.cta-blob.b1 { top: -150px; left: -100px; }
-.cta-blob.b2 { bottom: -150px; right: -100px; animation-delay: -6s; }
 .cta-strip h2 {
   font-family: var(--serif);
   font-size: clamp(1.8rem,4vw,3rem);
@@ -257,21 +240,21 @@ nav {
 /* ── FOOTER ── */
 footer {
   background: var(--dark);
-  border-top: 1px solid rgba(139,94,60,0.15);
+  border-top: 1px solid rgba(47,93,98,0.15);
   padding: 2.5rem 3rem;
   display: flex; justify-content: space-between; align-items: center;
   flex-wrap: wrap; gap: 1rem;
 }
-.f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: #FAFAF8; }
+.f-logo { font-family: var(--serif); font-size: 1.2rem; font-style: italic; color: #F6F9F9; }
 .f-links { display: flex; gap: 2rem; list-style: none; }
-.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(250,250,248,0.3); text-decoration: none; text-transform: uppercase; transition: color 0.25s; }
+.f-links a { font-size: 0.65rem; letter-spacing: 0.1em; color: rgba(246,249,249,0.3); text-decoration: none; text-transform: uppercase; transition: color 0.25s; }
 .f-links a:hover { color: var(--accent-lt); }
-.f-copy { font-size: 0.65rem; color: rgba(250,250,248,0.2); }
+.f-copy { font-size: 0.65rem; color: rgba(246,249,249,0.2); }
 
 /* ── LIGHTBOX ── */
 #lightbox {
   position: fixed; inset: 0; z-index: 200;
-  background: rgba(17,17,16,0.97);
+  background: rgba(15,21,22,0.97);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; pointer-events: none;
   transition: opacity 0.3s;
@@ -280,7 +263,7 @@ footer {
 .lb-img { max-width: 88vw; max-height: 88vh; object-fit: contain; display: block; border-radius: 12px; }
 .lb-ph {
   width: 60vw; max-width: 640px; height: 70vh;
-  background: #1C1A18; border-radius: 12px;
+  background: #14201F; border-radius: 12px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 1rem; color: rgba(255,255,255,0.15);
@@ -295,7 +278,7 @@ footer {
   background: none; display: flex; align-items: center; justify-content: center;
   transition: all 0.3s;
 }
-.lb-close:hover { border-color: var(--accent); background: rgba(139,94,60,0.2); }
+.lb-close:hover { border-color: var(--accent); background: rgba(47,93,98,0.2); }
 .lb-close svg { width: 16px; height: 16px; }
 .lb-prev, .lb-next {
   position: absolute; top: 50%; transform: translateY(-50%);
@@ -306,7 +289,7 @@ footer {
   transition: all 0.3s;
 }
 .lb-prev { left: 1.5rem; } .lb-next { right: 1.5rem; }
-.lb-prev:hover, .lb-next:hover { border-color: var(--accent); background: rgba(139,94,60,0.2); }
+.lb-prev:hover, .lb-next:hover { border-color: var(--accent); background: rgba(47,93,98,0.2); }
 .lb-prev svg, .lb-next svg { width: 18px; height: 18px; }
 .lb-info {
   position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
@@ -316,17 +299,146 @@ footer {
 .lb-counter { font-size: 0.65rem; letter-spacing: 0.12em; color: rgba(255,255,255,0.3); }
 
 /* ── ANIMATIONS ── */
-@keyframes blob {
-  0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  25%      { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-  50%      { border-radius: 40% 60% 30% 70% / 40% 50% 60% 30%; }
-  75%      { border-radius: 70% 30% 60% 40% / 30% 40% 50% 60%; }
-}
 @keyframes breathe { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.4); opacity:0.6; } }
 @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
 .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.8s cubic-bezier(0.23,1,0.32,1), transform 0.8s cubic-bezier(0.23,1,0.32,1); }
 .reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ── GALLERY ── */
+.gal-inner { max-width: 1200px; margin: 0 auto; }
+.gal-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
+.gal-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
+.gal-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 300; }
+.gal-h em { font-style: italic; color: var(--accent); }
+.gal-link { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: gap 0.3s; }
+.gal-link:hover { gap: 1rem; }
+
+.stagger-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 220px 180px;
+  gap: 8px;
+}
+.sg-item {
+  position: relative; overflow: hidden; 
+  background: #D6E0E0;
+  border-radius: 16px;
+  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+.sg-item:nth-child(1) { grid-column: 1; grid-row: 1/3; border-radius: 24px; }
+.sg-item:nth-child(2) { grid-column: 2/4; grid-row: 1; }
+.sg-item:nth-child(3) { grid-column: 4; grid-row: 1/3; border-radius: 24px; }
+.sg-item:nth-child(4) { grid-column: 2; grid-row: 2; }
+.sg-item:nth-child(5) { grid-column: 3; grid-row: 2; }
+.sg-item:hover { transform: scale(1.02); z-index: 2; }
+.sg-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.sg-item:hover img { transform: scale(1.06); }
+.sg-ph { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: rgba(47,93,98,0.3); }
+.sg-ph svg { width: 28px; height: 28px; }
+.sg-ph span { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; }
+.sg-overlay { position: absolute; inset: 0; background: rgba(47,93,98,0.5); border-radius: inherit; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+.sg-item:hover .sg-overlay { opacity: 1; }
+.sg-lbl { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 0.2rem; }
+
+/* ── LAMP STAGE (galerie se šňůrkou) ── */
+.lamp-stage {
+  --stage: #0A1314; --stage-lt: #8FBFC4;
+  position: relative; overflow: hidden; isolation: isolate;
+  background: var(--stage); padding: 0 3rem 4.5rem;
+}
+.lamp-stage .gal-inner { position: relative; z-index: 2; }
+.lamp-stage .gal-tag, .lamp-stage .gal-link { color: var(--stage-lt); }
+.lamp-stage .gal-h { color: #EAF2F2; }
+.lamp-stage .gal-h em { color: var(--stage-lt); }
+.lamp-stage .gal-top { min-height: 250px; align-items: flex-end; margin-bottom: 2.5rem; }
+.lamp-stage .sg-item { background: #16262A; }
+
+.lamp-glow {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(60% 55% at 50% 20%, rgba(47,93,98,0.6) 0%, rgba(47,93,98,0.2) 45%, transparent 78%);
+}
+.lamp-beam-wrap {
+  position: absolute; left: 0; right: 0; top: 162px; height: 640px; max-height: calc(100% - 162px);
+  z-index: 3; pointer-events: none; filter: blur(12px); mix-blend-mode: screen;
+}
+.lamp-beam {
+  position: absolute; inset: 0;
+  clip-path: polygon(calc(50% - 14px) 0, calc(50% + 14px) 0, 100% 100%, 0 100%);
+  background: linear-gradient(to bottom, rgba(255,226,170,0.5) 0%, rgba(255,226,170,0.16) 35%, rgba(255,226,170,0) 85%);
+}
+
+.lamp { position: absolute; top: 0; left: 50%; width: 240px; height: 280px; margin-left: -120px; z-index: 4; }
+.lamp-svg { display: block; overflow: visible; }
+.lamp-swing { transform-origin: 120px 0; }
+.lamp-swing.swing { animation: lampSwing 1.7s ease-out 1; }
+.lamp-pullwrap { animation: lampTug 6s ease-in-out 2.5s infinite; }
+.lamp-pull { transition: transform 0.55s cubic-bezier(0.3,1.7,0.5,1); cursor: grab; touch-action: none; outline: none; }
+.lamp-pull:active { cursor: grabbing; }
+.lamp-pull.dragging { transition: none; }
+.lamp-focus { fill: none; stroke: var(--stage-lt); stroke-width: 1.5; opacity: 0; }
+.lamp-pull:focus-visible .lamp-focus { opacity: 1; }
+.is-lit .lamp-pullwrap { animation: none; }
+
+.lamp-light { opacity: 0; transition: opacity 0.6s ease; }
+.is-lit .lamp-light { opacity: 1; animation: lampFlick 0.9s linear 1; }
+
+.lamp-hint {
+  position: absolute; left: 178px; top: 196px; width: 110px;
+  font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 1rem; line-height: 1.25;
+  color: rgba(255,255,255,0.6); pointer-events: none; transition: opacity 0.6s ease;
+}
+.is-lit .lamp-hint { opacity: 0; }
+
+/* fotky ztlumené, dokud se nerozsvítí (jen když JS lampu "ozbrojí") */
+.is-armed .sg-item::after {
+  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: #050B0C; opacity: 0.93;
+  transition: opacity 1.1s ease calc(var(--d, 0ms) + 180ms);
+}
+.is-armed.is-lit .sg-item::after { opacity: 0; }
+.is-armed:not(.is-lit) .sg-item { cursor: pointer; }
+
+.lamp-foot { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+.lamp-sound {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  background: none; border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.6);
+  padding: 0.5rem 1rem; border-radius: 100px; cursor: pointer;
+  font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: all 0.3s;
+}
+.lamp-sound:hover, .lamp-sound[aria-pressed="true"] { border-color: var(--stage-lt); color: var(--stage-lt); }
+.lamp-sound svg { width: 14px; height: 14px; }
+.lamp-sound .snd-on { display: none; }
+.lamp-sound[aria-pressed="true"] .snd-on { display: block; }
+.lamp-sound[aria-pressed="true"] .snd-off { display: none; }
+
+@keyframes lampSwing {
+  0% { transform: rotate(0); } 14% { transform: rotate(2.6deg); } 34% { transform: rotate(-2deg); }
+  54% { transform: rotate(1.2deg); } 74% { transform: rotate(-0.6deg); } 100% { transform: rotate(0); }
+}
+@keyframes lampTug {
+  0%, 84%, 100% { transform: translateY(0); } 88% { transform: translateY(12px); }
+  92% { transform: translateY(0); } 95% { transform: translateY(6px); } 98% { transform: translateY(0); }
+}
+@keyframes lampFlick {
+  0% { opacity: 0; } 8% { opacity: 0.95; } 15% { opacity: 0.1; } 26% { opacity: 1; }
+  36% { opacity: 0.45; } 50% { opacity: 1; } 100% { opacity: 1; }
+}
+
+@media (max-width: 960px) {
+  .lamp-stage { padding: 0 1.5rem 4rem; }
+  .lamp-stage .gal-top { min-height: 0; padding-top: 18rem; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; margin-bottom: 2rem; }
+  .lamp-stage .gal-tag { text-align: center; }
+  .stagger-grid { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 190px; }
+  .stagger-grid .sg-item:nth-child(n) { grid-column: auto; grid-row: auto; }
+  .stagger-grid .sg-item:nth-child(1) { grid-column: 1 / 3; }
+  .lamp-foot { justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lamp-pullwrap, .lamp-swing.swing, .is-lit .lamp-light { animation: none !important; }
+  .is-armed .sg-item::after { transition-duration: 0.3s; transition-delay: 0s !important; }
+}
 
 /* ── MOBILE ── */
 @media (max-width: 900px) {
@@ -382,7 +494,7 @@ footer {
 }
 .intro-sub {
   font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
-  color: rgba(17,17,16,0); transition: color 0.5s ease;
+  color: rgba(15,21,22,0); transition: color 0.5s ease;
 }
 #intro.leaving {
   transform: translateY(-100%);
@@ -467,8 +579,6 @@ footer {
   <div class="intro-sub" id="introSub">Galerie · Portfolio</div>
 </div>
 
-<!-- BLOB CANVAS -->
-<canvas id="blob-canvas"></canvas>
 
 <!-- NAV -->
 <nav>
@@ -486,13 +596,73 @@ footer {
 
 <!-- PAGE HEADER -->
 <div class="page-header">
-  <div class="header-blob"></div>
   <div class="header-inner reveal">
     <div class="header-tag"><div class="tag-dot"></div>Portfolio</div>
     <h1>Moje <em>fotografie</em></h1>
     <p>Každý snímek vypráví příběh. Prohlédněte si ukázky ze svatebního, rodinného, těhotenského focení a portrétů.</p>
   </div>
 </div>
+
+<!-- LAMPA – vybrané momenty -->
+<section id="lampa" class="lamp-stage" data-lamp aria-label="Vybrané fotografie">
+  <!-- LAMPA: světlo, kužel, lampa se šňůrkou -->
+    <div class="lamp-glow lamp-light" aria-hidden="true"></div>
+    <div class="lamp-beam-wrap lamp-light" aria-hidden="true"><div class="lamp-beam"></div></div>
+  <div class="gal-inner">
+    <div class="lamp">
+      <svg class="lamp-svg" viewBox="0 0 240 280" width="240" height="280" xmlns="http://www.w3.org/2000/svg" focusable="false">
+        <defs>
+          <linearGradient id="lmpShade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#2C4347"/><stop offset="0.45" stop-color="#16272A"/><stop offset="1" stop-color="#091214"/>
+          </linearGradient>
+          <radialGradient id="lmpHalo" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#FFEBC2" stop-opacity="0.85"/><stop offset="0.4" stop-color="#FFDDA0" stop-opacity="0.32"/><stop offset="1" stop-color="#FFDDA0" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="lmpRim" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0" stop-color="#FFF3D6"/><stop offset="0.7" stop-color="#FFD68A"/><stop offset="1" stop-color="#B98A3E"/>
+          </radialGradient>
+        </defs>
+        <g class="lamp-swing">
+          <line x1="120" y1="0" x2="120" y2="92" stroke="#7E9396" stroke-width="1.5"/>
+          <g class="lamp-pullwrap">
+            <g class="lamp-pull" role="switch" tabindex="0" aria-checked="false" aria-label="Rozsvítit lampu a odhalit fotografie">
+              <line x1="156" y1="112" x2="156" y2="228" stroke="#B9C7C8" stroke-width="1.4"/>
+              <circle cx="156" cy="235" r="6.5" fill="#C9A86A"/><circle cx="156" cy="235" r="2.2" fill="#7A5F2E"/>
+              <circle class="lamp-focus" cx="156" cy="235" r="15"/>
+              <rect x="136" y="160" width="40" height="104" rx="20" fill="rgba(0,0,0,0)"/>
+            </g>
+          </g>
+          <path d="M60 154C60 112 88 92 120 92s60 20 60 62z" fill="url(#lmpShade)"/>
+          <rect x="111" y="84" width="18" height="12" rx="3" fill="#1B2D30" stroke="#C9A86A" stroke-width="1"/>
+          <ellipse cx="120" cy="154" rx="60" ry="8" fill="#050B0C" stroke="#C9A86A" stroke-width="1.5"/>
+          <ellipse class="lamp-light" cx="120" cy="154" rx="56" ry="6.2" fill="url(#lmpRim)"/>
+          <circle class="lamp-bulb" cx="120" cy="157" r="10" fill="#33474A"/>
+          <circle class="lamp-light" cx="120" cy="157" r="10" fill="#FFF1CF"/>
+          <circle class="lamp-light" cx="120" cy="158" r="60" fill="url(#lmpHalo)"/>
+        </g>
+      </svg>
+      <p class="lamp-hint" aria-hidden="true">Zatáhněte<br>za šňůrku</p>
+    </div>
+    <div class="gal-top">
+      <div><div class="gal-tag">Vybrané momenty</div><h2 class="gal-h">Rozsviťte <em>příběh</em></h2></div>
+      <a href="#filterBar" class="gal-link">Všechny fotky <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+    </div>
+    <div class="stagger-grid">
+      <div class="sg-item"><img loading="lazy" decoding="async" src="images/svatba-55.jpg" alt="Svatba"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><img loading="lazy" decoding="async" src="images/rodina-13.jpg" alt="Rodina"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><img loading="lazy" decoding="async" src="images/portret-02.jpg" alt="Portrét"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><img loading="lazy" decoding="async" src="images/tehotenstvi-77.jpg" alt="Těhotenství"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+      <div class="sg-item"><img loading="lazy" decoding="async" src="images/svatba-63.jpg" alt="Svatba"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
+    </div>
+    <div class="lamp-foot">
+      <button type="button" class="lamp-sound" aria-pressed="false">
+        <svg class="snd-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+        <svg class="snd-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+        <span>Zvuk</span>
+      </button>
+    </div>
+  </div>
+</section>
 
 <!-- FILTER TABS -->
 <div class="filter-bar sr-stagger" id="filterBar">
@@ -552,8 +722,6 @@ footer {
 
 <!-- CTA -->
 <div class="cta-strip">
-  <div class="cta-blob b1"></div>
-  <div class="cta-blob b2"></div>
   <h2>Zaujalo vás moje <em>portfolio?</em></h2>
   <p>Ozvěte se mi a společně zachytíme vaše nejkrásnější momenty.</p>
   <a href="index.html#kontakt" class="btn-white">Nezávazná poptávka</a>
@@ -608,7 +776,7 @@ introText.split('').forEach((ch, i) => {
 document.body.style.overflow = 'hidden';
 requestAnimationFrame(() => {
   logoEl.querySelectorAll('.intro-char').forEach(ch => { ch.style.transform='translateY(0)'; ch.style.opacity='1'; });
-  setTimeout(() => { lineEl.style.width='100%'; subEl.style.color='rgba(139,94,60,0.6)'; }, 600);
+  setTimeout(() => { lineEl.style.width='100%'; subEl.style.color='rgba(47,93,98,0.6)'; }, 600);
   setTimeout(() => { document.getElementById('intro').classList.add('leaving'); document.body.style.overflow=''; }, 1800);
   setTimeout(() => { document.getElementById('intro').style.display='none'; }, 2700);
 });
@@ -620,29 +788,6 @@ window.addEventListener('scroll', () => {
   progressBar.style.width = (scrollY / max * 100) + '%';
 }, { passive: true });
 
-// ── BLOB CANVAS
-const canvas = document.getElementById('blob-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-const blobs = [
-  { x:0.1,  y:0.2,  r:0.15, phase:0, color:'rgba(139,94,60,0.06)' },
-  { x:0.85, y:0.35, r:0.2,  phase:2, color:'rgba(139,94,60,0.04)' },
-  { x:0.5,  y:0.75, r:0.14, phase:4, color:'rgba(176,125,82,0.05)' },
-  { x:0.15, y:0.8,  r:0.18, phase:1, color:'rgba(139,94,60,0.05)' },
-];
-function drawBlob(cx, cy, r, t, color) {
-  ctx.beginPath();
-  for(let i=0;i<=16;i++){const a=(i/8)*Math.PI,w=r*(0.15*Math.sin(t*2+i*1.3)+0.1*Math.cos(t*1.5+i*0.9)),rad=r+w;i===0?ctx.moveTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad):ctx.lineTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad);}
-  ctx.closePath(); ctx.fillStyle=color; ctx.fill();
-}
-let bt=0;
-function animateCanvas(){
-  ctx.clearRect(0,0,canvas.width,canvas.height); bt+=0.004;
-  blobs.forEach(b=>{const bx=b.x*canvas.width+Math.sin(bt+b.phase)*60,by=b.y*canvas.height+Math.cos(bt*0.8+b.phase)*50;drawBlob(bx,by,b.r*Math.min(canvas.width,canvas.height),bt+b.phase,b.color);});
-  requestAnimationFrame(animateCanvas);
-}
-animateCanvas();
 
 // ── GENERATE GALLERY ITEMS
 const catConfig = [
@@ -748,6 +893,125 @@ document.addEventListener('keydown', e=>{
   if(e.key==='ArrowLeft'){ currentIdx=(currentIdx-1+visibleItems.length)%visibleItems.length; renderLightbox(); }
   if(e.key==='ArrowRight'){ currentIdx=(currentIdx+1)%visibleItems.length; renderLightbox(); }
 });
+
+// ── LAMPA: tah za šňůrku rozsvítí fotky
+(function(){
+  const stage = document.querySelector('[data-lamp]');
+  if(!stage) return;
+  const handle = stage.querySelector('.lamp-pull');
+  const swingG = stage.querySelector('.lamp-swing');
+  const bulb   = stage.querySelector('.lamp-bulb');
+  const items  = Array.from(stage.querySelectorAll('.sg-item'));
+  const soundBtn = stage.querySelector('.lamp-sound');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lit = false, interacted = false, soundOn = false, actx = null;
+
+  stage.classList.add('is-armed');
+
+  function playSound(on){
+    if(!soundOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if(actx.state === 'suspended') actx.resume();
+      const t = actx.currentTime;
+      const len = Math.floor(actx.sampleRate * 0.03);
+      const buf = actx.createBuffer(1, len, actx.sampleRate);
+      const d = buf.getChannelData(0);
+      for(let i = 0; i < len; i++) d[i] = (Math.random()*2 - 1) * Math.pow(1 - i/len, 3);
+      const src = actx.createBufferSource(); src.buffer = buf;
+      const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 0.8;
+      const g = actx.createGain(); g.gain.value = 0.6;
+      src.connect(bp); bp.connect(g); g.connect(actx.destination); src.start(t);
+      if(on){
+        const o = actx.createOscillator(), og = actx.createGain();
+        o.type = 'sine'; o.frequency.setValueAtTime(120, t + 0.03);
+        og.gain.setValueAtTime(0.001, t + 0.03);
+        og.gain.linearRampToValueAtTime(0.05, t + 0.11);
+        og.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+        o.connect(og); og.connect(actx.destination); o.start(t + 0.03); o.stop(t + 0.55);
+      }
+    } catch(e) {}
+  }
+
+  function setLit(on, auto){
+    lit = on;
+    if(!auto) interacted = true;
+    handle.setAttribute('aria-checked', String(on));
+    const b = bulb.getBoundingClientRect();
+    const bx = b.left + b.width/2, by = b.top + b.height/2;
+    items.forEach(it => {
+      const r = it.getBoundingClientRect();
+      const dist = Math.hypot(r.left + r.width/2 - bx, r.top + r.height/2 - by);
+      it.style.setProperty('--d', (on && !reduce) ? Math.round(Math.min(dist * 0.8, 900)) + 'ms' : '0ms');
+    });
+    stage.classList.toggle('is-lit', on);
+    if(!reduce){
+      swingG.classList.remove('swing');
+      void swingG.getBoundingClientRect();
+      swingG.classList.add('swing');
+    }
+    playSound(on);
+  }
+
+  // tažení za šňůrku (myš i dotyk), klepnutí funguje taky
+  let dragging = false, moved = false, startY = 0, dy = 0;
+  handle.addEventListener('pointerdown', e => {
+    dragging = true; moved = false; startY = e.clientY; dy = 0;
+    handle.classList.add('dragging');
+    try { handle.setPointerCapture(e.pointerId); } catch(_) {}
+    e.preventDefault();
+  });
+  handle.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    const raw = e.clientY - startY;
+    if(Math.abs(raw) > 4) moved = true;
+    dy = Math.max(0, Math.min(raw * 0.8, 40));
+    handle.style.transform = 'translateY(' + dy + 'px)';
+  });
+  handle.addEventListener('touchmove', e => { if(dragging) e.preventDefault(); }, { passive: false });
+  function release(commit){
+    if(!dragging) return;
+    dragging = false;
+    handle.classList.remove('dragging');
+    handle.style.transform = '';
+    if(commit && (!moved || dy >= 16)) setLit(!lit);
+  }
+  handle.addEventListener('pointerup', () => release(true));
+  handle.addEventListener('pointercancel', () => release(false));
+  handle.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      handle.style.transform = 'translateY(26px)';
+      setTimeout(() => { handle.style.transform = ''; }, 160);
+      setLit(!lit);
+    }
+  });
+
+  // klepnutí na ztlumenou fotku taky rozsvítí
+  items.forEach(it => it.addEventListener('click', () => { if(!lit) setLit(true); }));
+
+  // zvuk (výchozí vypnuto)
+  if(soundBtn){
+    soundBtn.addEventListener('click', () => {
+      soundOn = !soundOn;
+      soundBtn.setAttribute('aria-pressed', String(soundOn));
+      if(soundOn){
+        try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {}
+      }
+    });
+  }
+
+  // pojistka: když nikdo za šňůrku nezatáhne, po 10 s v záběru se rozsvítí samo
+  let autoT = null;
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      clearTimeout(autoT);
+      if(e.isIntersecting && !interacted && !lit){
+        autoT = setTimeout(() => { if(!interacted && !lit) setLit(true, true); }, 10000);
+      }
+    });
+  }, { threshold: 0.35 }).observe(stage);
+})();
 </script>
 </body>
 </html>
