@@ -684,7 +684,7 @@ footer {
   display: flex; align-items: center; justify-content: center;
   flex-direction: column; gap: 2rem;
 }
-.intro-iris { position: absolute; inset: 0; z-index: 0; --u: max(100vw, 100vh); --px: calc(var(--u) * 0.64); --lens: min(92vmin, 720px); overflow: hidden; }
+.intro-iris { position: absolute; inset: 0; z-index: 0; --u: max(100vw, 100vh); --px: calc(var(--u) * 0.64); overflow: hidden; }
 .iris-wrap { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 .iris-blade {
   position: absolute; left: calc(var(--px) * -1.0); top: calc(var(--px) * -0.035);
@@ -724,40 +724,15 @@ footer {
 }
 #intro.leaving { pointer-events: none; }
 #intro.leaving .intro-logo, #intro.leaving .intro-line, #intro.leaving .intro-sub { opacity: 0; transition: opacity 0.35s ease; }
-/* Hrany všech šesti lamel nad sebou — zavřená clona tak ukáže celou „větrníkovou" kresbu */
-.iris-edge {
-  position: absolute; left: calc(var(--px) * 0.0202); top: calc(var(--px) * -0.035);
-  width: calc(var(--px) * 1.63); height: 0; pointer-events: none;
-  border-top: 1px solid rgba(160,205,210,0.8);
-  box-shadow: 0 1px 10px rgba(0,0,0,0.45);
-  transform-origin: calc(var(--px) * 0.9798) calc(var(--px) * 0.035); transform: rotate(0deg);
-  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s;
-  will-change: transform; backface-visibility: hidden;
+#intro.leaving .iris-blade { transform: rotate(-72deg); border-top-color: rgba(143,191,196,0.45); }
+/* Zavřená clona = šest stejných výsečí, které se překrývají jako vějíř */
+.iris-fan {
+  position: absolute; left: 50%; top: 50%; z-index: 6; pointer-events: none;
+  width: calc(var(--u) * 1.5); height: calc(var(--u) * 1.5);
+  margin: calc(var(--u) * -0.75) 0 0 calc(var(--u) * -0.75);
+  transition: opacity 0.3s ease-out;
 }
-#intro.leaving .iris-blade, #intro.leaving .iris-edge { transform: rotate(-72deg); }
-#intro.leaving .iris-blade { border-top-color: rgba(143,191,196,0.45); }
-/* Zavřená clona = kruhový „tubus objektivu": čáry lamel jen uvnitř kruhu + kroužky */
-.iris-edges {
-  position: absolute; inset: 0; z-index: 6; pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 0, #000 calc(var(--lens) * 0.43), transparent calc(var(--lens) * 0.495));
-          mask-image: radial-gradient(circle at 50% 50%, #000 0, #000 calc(var(--lens) * 0.43), transparent calc(var(--lens) * 0.495));
-  transition: opacity 0.35s ease-out;
-}
-.iris-lens {
-  position: absolute; left: 50%; top: 50%; z-index: 5; pointer-events: none;
-  width: var(--lens); height: var(--lens);
-  margin: calc(var(--lens) / -2) 0 0 calc(var(--lens) / -2);
-  border-radius: 50%;
-  border: 1px solid rgba(143,191,196,0.45);
-  background: radial-gradient(circle, rgba(47,93,98,0.18) 0%, rgba(47,93,98,0.06) 55%, rgba(0,0,0,0) 72%);
-  box-shadow: 0 0 0 9px rgba(143,191,196,0.05), 0 0 0 10px rgba(143,191,196,0.16), 0 0 90px rgba(47,93,98,0.25), inset 0 0 70px rgba(0,0,0,0.55);
-  transition: opacity 0.45s ease-out;
-}
-.iris-lens::after {
-  content: ''; position: absolute; inset: 6%; border-radius: 50%;
-  border: 1px solid rgba(143,191,196,0.2);
-}
-#intro.leaving .iris-edges, #intro.leaving .iris-lens { opacity: 0; }
+#intro.leaving .iris-fan { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { #intro { display: none !important; } }
 
 /* ── ENHANCED SR ── */
@@ -897,7 +872,7 @@ footer {
 
 <!-- INTRO LOADER -->
 <div id="intro">
-  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div><div class="iris-edges"><div class="iris-wrap" style="transform:rotate(0deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:6"><div class="iris-edge"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:6"><div class="iris-edge"></div></div></div><div class="iris-lens"></div></div>
+  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div><svg class="iris-fan" viewBox="-1.17 -1.17 2.34 2.34" aria-hidden="true"><defs><linearGradient id="fanBase" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1.2" y2="0.69"><stop offset="0" stop-color="#1D353A"/><stop offset="1" stop-color="#0B1719"/></linearGradient><linearGradient id="fanShade" gradientUnits="userSpaceOnUse" x1="0.0260" y1="-0.0150" x2="0.4590" y2="-0.2650"><stop offset="0" stop-color="#000" stop-opacity="0.6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient></defs><g transform="rotate(0)"><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanBase)"/><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanShade)"/><line x1="0.0173" y1="-0.0300" x2="2.2000" y2="-0.0300" stroke="rgba(160,205,210,0.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g><g transform="rotate(60)"><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanBase)"/><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanShade)"/><line x1="0.0173" y1="-0.0300" x2="2.2000" y2="-0.0300" stroke="rgba(160,205,210,0.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g><g transform="rotate(120)"><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanBase)"/><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanShade)"/><line x1="0.0173" y1="-0.0300" x2="2.2000" y2="-0.0300" stroke="rgba(160,205,210,0.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g><g transform="rotate(180)"><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanBase)"/><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanShade)"/><line x1="0.0173" y1="-0.0300" x2="2.2000" y2="-0.0300" stroke="rgba(160,205,210,0.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g><g transform="rotate(240)"><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanBase)"/><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanShade)"/><line x1="0.0173" y1="-0.0300" x2="2.2000" y2="-0.0300" stroke="rgba(160,205,210,0.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g><g transform="rotate(300)"><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanBase)"/><polygon points="0.0173,-0.0300 2.2000,-0.0300 1.1260,1.8903 0.0346,-0.0000" fill="url(#fanShade)"/><line x1="0.0173" y1="-0.0300" x2="2.2000" y2="-0.0300" stroke="rgba(160,205,210,0.6)" stroke-width="1" vector-effect="non-scaling-stroke"/></g><polygon points="0.0173,-0.0300 0.0346,-0.0000 0.0173,0.0300 -0.0173,0.0300 -0.0346,0.0000 -0.0173,-0.0300" fill="#0B1719"/></svg></div>
   <div class="intro-logo" id="introLogo"></div>
   <div class="intro-line" id="introLine"></div>
   <div class="intro-sub" id="introSub">Fotograf · Praha & celá ČR</div>
