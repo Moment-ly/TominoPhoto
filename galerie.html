@@ -305,139 +305,108 @@ footer {
 .reveal { opacity:0; transform:translateY(20px); transition:opacity 0.8s cubic-bezier(0.23,1,0.32,1), transform 0.8s cubic-bezier(0.23,1,0.32,1); }
 .reveal.visible { opacity:1; transform:translateY(0); }
 
-/* ── GALLERY ── */
-.gal-inner { max-width: 1200px; margin: 0 auto; }
-.gal-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; }
-.gal-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
-.gal-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 300; }
-.gal-h em { font-style: italic; color: var(--accent); }
-.gal-link { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: gap 0.3s; }
+/* ── OPONA (galerie se závěsem) ── */
+.curtain-stage {
+  --stage-lt: #8FBFC4;
+  position: relative; overflow: hidden; isolation: isolate;
+  background: #0A1314; padding: 0 3rem 5rem;
+}
+.curtain-stage::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(60% 50% at 50% 0%, rgba(47,93,98,0.45), transparent 75%);
+}
+.curtain-stage .gal-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 2; }
+.gal-top { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 6.5rem; margin-bottom: 2rem; }
+.gal-tag { font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--stage-lt); margin-bottom: 0.75rem; }
+.gal-h { font-family: var(--serif); font-size: clamp(2rem,4vw,3rem); font-weight: 300; color: #EAF2F2; }
+.gal-h em { font-style: italic; color: var(--stage-lt); }
+.gal-link { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--stage-lt); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: gap 0.3s; }
 .gal-link:hover { gap: 1rem; }
 
-.stagger-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: 220px 180px;
-  gap: 8px;
+.curtain-scene { position: relative; border-radius: 24px; overflow: hidden; background: #071012; }
+.curtain-scene::before {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(70% 90% at 50% 0%, rgba(255,226,170,0.30), transparent 72%);
+  mix-blend-mode: screen; opacity: 0; transition: opacity 1.4s ease 0.3s;
 }
-.sg-item {
-  position: relative; overflow: hidden; 
-  background: #D6E0E0;
-  border-radius: 16px;
-  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
-}
-.sg-item:nth-child(1) { grid-column: 1; grid-row: 1/3; border-radius: 24px; }
-.sg-item:nth-child(2) { grid-column: 2/4; grid-row: 1; }
-.sg-item:nth-child(3) { grid-column: 4; grid-row: 1/3; border-radius: 24px; }
-.sg-item:nth-child(4) { grid-column: 2; grid-row: 2; }
-.sg-item:nth-child(5) { grid-column: 3; grid-row: 2; }
-.sg-item:hover { transform: scale(1.02); z-index: 2; }
-.sg-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
-.sg-item:hover img { transform: scale(1.06); }
-.sg-ph { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: rgba(47,93,98,0.3); }
-.sg-ph svg { width: 28px; height: 28px; }
-.sg-ph span { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; }
-.sg-overlay { position: absolute; inset: 0; background: rgba(47,93,98,0.5); border-radius: inherit; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
-.sg-item:hover .sg-overlay { opacity: 1; }
-.sg-lbl { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 0.2rem; }
+.curtain-scene.is-open::before { opacity: 1; }
 
-/* ── LAMP STAGE (galerie se šňůrkou) ── */
-.lamp-stage {
-  --stage: #0A1314; --stage-lt: #8FBFC4;
-  position: relative; overflow: hidden; isolation: isolate;
-  background: var(--stage); padding: 0 3rem 4.5rem;
+.cat-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 440px; gap: 8px;
+  padding: 34px 5.4% 16px; position: relative;
 }
-.lamp-stage .gal-inner { position: relative; z-index: 2; }
-.lamp-stage .gal-tag, .lamp-stage .gal-link { color: var(--stage-lt); }
-.lamp-stage .gal-h { color: #EAF2F2; }
-.lamp-stage .gal-h em { color: var(--stage-lt); }
-.lamp-stage .gal-top { min-height: 250px; align-items: flex-end; margin-bottom: 2.5rem; }
-.lamp-stage .sg-item { background: #16262A; }
+.cat-tile {
+  position: relative; display: block; border-radius: 16px; overflow: hidden;
+  background: #16262A; text-decoration: none; color: #fff;
+}
+.cat-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s ease; }
+.cat-tile:hover img, .cat-tile:focus-visible img { transform: scale(1.06); }
+.cat-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,11,12,0.8) 0%, rgba(5,11,12,0) 55%); pointer-events: none; }
+.cat-tile:focus-visible { outline: 2px solid var(--stage-lt); outline-offset: 2px; }
+.cat-label { position: absolute; left: 1.25rem; right: 1.25rem; bottom: 1.1rem; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; gap: 0.5rem; }
+.cat-name { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 1.7rem; line-height: 1; }
+.cat-num { font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.75; white-space: nowrap; }
+.is-armed .cat-tile { transform: scale(0.94); opacity: 0.4; transition: transform 1.1s cubic-bezier(0.2,0.8,0.2,1), opacity 1.1s ease; }
+.is-armed.is-open .cat-tile { transform: none; opacity: 1; }
+.is-armed.is-open .cat-tile:nth-child(1) { transition-delay: 0.45s; }
+.is-armed.is-open .cat-tile:nth-child(2) { transition-delay: 0.6s; }
+.is-armed.is-open .cat-tile:nth-child(3) { transition-delay: 0.75s; }
+.is-armed.is-open .cat-tile:nth-child(4) { transition-delay: 0.9s; }
 
-.lamp-glow {
-  position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(60% 55% at 50% 20%, rgba(47,93,98,0.6) 0%, rgba(47,93,98,0.2) 45%, transparent 78%);
+.curtain { display: none; position: absolute; top: 0; bottom: 0; width: 50.4%; z-index: 3; cursor: pointer;
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.40) 0, rgba(0,0,0,0.40) 5px, rgba(255,255,255,0.07) 15px, rgba(0,0,0,0.26) 27px, rgba(0,0,0,0.40) 36px),
+    linear-gradient(180deg, #1D5057 0%, #11353A 55%, #0A2327 100%);
+  box-shadow: inset 0 -70px 90px rgba(0,0,0,0.5);
+  transition: transform 1.5s cubic-bezier(0.7,0,0.2,1);
 }
-.lamp-beam-wrap {
-  position: absolute; left: 0; right: 0; top: 162px; height: 640px; max-height: calc(100% - 162px);
-  z-index: 3; pointer-events: none; filter: blur(12px); mix-blend-mode: screen;
-}
-.lamp-beam {
-  position: absolute; inset: 0;
-  clip-path: polygon(calc(50% - 14px) 0, calc(50% + 14px) 0, 100% 100%, 0 100%);
-  background: linear-gradient(to bottom, rgba(255,226,170,0.5) 0%, rgba(255,226,170,0.16) 35%, rgba(255,226,170,0) 85%);
+.is-armed .curtain { display: block; }
+.curtain-l { left: 0; transform-origin: 0 50%; }
+.curtain-r { right: 0; transform-origin: 100% 50%; }
+.curtain-l::after, .curtain-r::after { content: ''; position: absolute; top: 0; bottom: 0; width: 8px; }
+.curtain-l::after { right: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14)); }
+.curtain-r::after { left: 0; background: linear-gradient(270deg, transparent, rgba(255,255,255,0.14)); }
+.is-open .curtain { transform: scaleX(0.1); cursor: default; }
+
+.curtain-rod {
+  position: absolute; top: 0; left: 0; right: 0; height: 14px; z-index: 6;
+  background: linear-gradient(180deg, #E6CB92, #A9833F 60%, #6B521F);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
-.lamp { position: absolute; top: 0; left: 50%; width: 240px; height: 280px; margin-left: -120px; z-index: 4; }
-.lamp-svg { display: block; overflow: visible; }
-.lamp-swing { transform-origin: 120px 0; }
-.lamp-swing.swing { animation: lampSwing 1.7s ease-out 1; }
-.lamp-pullwrap { animation: lampTug 6s ease-in-out 2.5s infinite; }
-.lamp-pull { transition: transform 0.55s cubic-bezier(0.3,1.7,0.5,1); cursor: grab; touch-action: none; outline: none; }
-.lamp-pull:active { cursor: grabbing; }
-.lamp-pull.dragging { transition: none; }
-.lamp-focus { fill: none; stroke: var(--stage-lt); stroke-width: 1.5; opacity: 0; }
-.lamp-pull:focus-visible .lamp-focus { opacity: 1; }
-.is-lit .lamp-pullwrap { animation: none; }
-
-.lamp-light { opacity: 0; transition: opacity 0.6s ease; }
-.is-lit .lamp-light { opacity: 1; animation: lampFlick 0.9s linear 1; }
-
-.lamp-hint {
-  position: absolute; left: 178px; top: 196px; width: 110px;
+.curtain-cordbox { display: none; position: absolute; top: 0; left: 50%; width: 48px; height: 300px; margin-left: -24px; z-index: 5; }
+.is-armed .curtain-cordbox { display: block; transition: opacity 0.6s ease 0.4s, visibility 0s linear 1s; }
+.is-open .curtain-cordbox { opacity: 0; visibility: hidden; pointer-events: none; }
+.curtain-cordbox svg { display: block; overflow: visible; }
+.curtain-pullwrap { animation: cordTug 6s ease-in-out 2.5s infinite; }
+.is-open .curtain-pullwrap { animation: none; }
+.curtain-pull { transition: transform 0.55s cubic-bezier(0.3,1.7,0.5,1); cursor: grab; touch-action: none; outline: none; }
+.curtain-pull:active { cursor: grabbing; }
+.curtain-pull.dragging { transition: none; }
+.curtain-focus { fill: none; stroke: var(--stage-lt); stroke-width: 1.5; opacity: 0; }
+.curtain-pull:focus-visible .curtain-focus { opacity: 1; }
+.curtain-hint {
+  display: none; position: absolute; left: calc(50% + 34px); top: 208px; width: 120px; z-index: 5; pointer-events: none;
   font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 1rem; line-height: 1.25;
-  color: rgba(255,255,255,0.6); pointer-events: none; transition: opacity 0.6s ease;
+  color: rgba(255,255,255,0.7); transition: opacity 0.6s ease;
 }
-.is-lit .lamp-hint { opacity: 0; }
-
-/* fotky ztlumené, dokud se nerozsvítí (jen když JS lampu "ozbrojí") */
-.is-armed .sg-item::after {
-  content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  background: #050B0C; opacity: 0.93;
-  transition: opacity 1.1s ease calc(var(--d, 0ms) + 180ms);
-}
-.is-armed.is-lit .sg-item::after { opacity: 0; }
-.is-armed:not(.is-lit) .sg-item { cursor: pointer; }
-
-.lamp-foot { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
-.lamp-sound {
-  display: inline-flex; align-items: center; gap: 0.55rem;
-  background: none; border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.6);
-  padding: 0.5rem 1rem; border-radius: 100px; cursor: pointer;
-  font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
-  transition: all 0.3s;
-}
-.lamp-sound:hover, .lamp-sound[aria-pressed="true"] { border-color: var(--stage-lt); color: var(--stage-lt); }
-.lamp-sound svg { width: 14px; height: 14px; }
-.lamp-sound .snd-on { display: none; }
-.lamp-sound[aria-pressed="true"] .snd-on { display: block; }
-.lamp-sound[aria-pressed="true"] .snd-off { display: none; }
-
-@keyframes lampSwing {
-  0% { transform: rotate(0); } 14% { transform: rotate(2.6deg); } 34% { transform: rotate(-2deg); }
-  54% { transform: rotate(1.2deg); } 74% { transform: rotate(-0.6deg); } 100% { transform: rotate(0); }
-}
-@keyframes lampTug {
+.is-armed .curtain-hint { display: block; }
+.is-open .curtain-hint { opacity: 0; }
+@keyframes cordTug {
   0%, 84%, 100% { transform: translateY(0); } 88% { transform: translateY(12px); }
   92% { transform: translateY(0); } 95% { transform: translateY(6px); } 98% { transform: translateY(0); }
 }
-@keyframes lampFlick {
-  0% { opacity: 0; } 8% { opacity: 0.95; } 15% { opacity: 0.1; } 26% { opacity: 1; }
-  36% { opacity: 0.45; } 50% { opacity: 1; } 100% { opacity: 1; }
-}
 
 @media (max-width: 960px) {
-  .lamp-stage { padding: 0 1.5rem 4rem; }
-  .lamp-stage .gal-top { min-height: 0; padding-top: 18rem; flex-direction: column; align-items: center; gap: 1.25rem; text-align: center; margin-bottom: 2rem; }
-  .lamp-stage .gal-tag { text-align: center; }
-  .stagger-grid { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 190px; }
-  .stagger-grid .sg-item:nth-child(n) { grid-column: auto; grid-row: auto; }
-  .stagger-grid .sg-item:nth-child(1) { grid-column: 1 / 3; }
-  .lamp-foot { justify-content: center; }
+  .curtain-stage { padding: 0 1.5rem 4rem; }
+  .gal-top { flex-direction: column; align-items: center; text-align: center; gap: 1.25rem; padding-top: 5.5rem; }
+  .cat-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 250px 250px; padding: 34px 6% 14px; }
+  .cat-name { font-size: 1.35rem; }
+  .cat-num { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lamp-pullwrap, .lamp-swing.swing, .is-lit .lamp-light { animation: none !important; }
-  .is-armed .sg-item::after { transition-duration: 0.3s; transition-delay: 0s !important; }
+  .curtain, .is-armed .cat-tile { transition-duration: 0.3s; transition-delay: 0s !important; }
+  .curtain-pullwrap { animation: none !important; }
 }
 
 /* ── MOBILE ── */
@@ -603,63 +572,38 @@ footer {
   </div>
 </div>
 
-<!-- LAMPA – vybrané momenty -->
-<section id="lampa" class="lamp-stage" data-lamp aria-label="Vybrané fotografie">
-  <!-- LAMPA: světlo, kužel, lampa se šňůrkou -->
-    <div class="lamp-glow lamp-light" aria-hidden="true"></div>
-    <div class="lamp-beam-wrap lamp-light" aria-hidden="true"><div class="lamp-beam"></div></div>
+<!-- OPONA – výběr kategorií -->
+<section id="opona" class="curtain-stage">
   <div class="gal-inner">
-    <div class="lamp">
-      <svg class="lamp-svg" viewBox="0 0 240 280" width="240" height="280" xmlns="http://www.w3.org/2000/svg" focusable="false">
-        <defs>
-          <linearGradient id="lmpShade" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#2C4347"/><stop offset="0.45" stop-color="#16272A"/><stop offset="1" stop-color="#091214"/>
-          </linearGradient>
-          <radialGradient id="lmpHalo" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0" stop-color="#FFEBC2" stop-opacity="0.85"/><stop offset="0.4" stop-color="#FFDDA0" stop-opacity="0.32"/><stop offset="1" stop-color="#FFDDA0" stop-opacity="0"/>
-          </radialGradient>
-          <radialGradient id="lmpRim" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0" stop-color="#FFF3D6"/><stop offset="0.7" stop-color="#FFD68A"/><stop offset="1" stop-color="#B98A3E"/>
-          </radialGradient>
-        </defs>
-        <g class="lamp-swing">
-          <line x1="120" y1="0" x2="120" y2="92" stroke="#7E9396" stroke-width="1.5"/>
-          <g class="lamp-pullwrap">
-            <g class="lamp-pull" role="switch" tabindex="0" aria-checked="false" aria-label="Rozsvítit lampu a odhalit fotografie">
-              <line x1="156" y1="112" x2="156" y2="228" stroke="#B9C7C8" stroke-width="1.4"/>
-              <circle cx="156" cy="235" r="6.5" fill="#C9A86A"/><circle cx="156" cy="235" r="2.2" fill="#7A5F2E"/>
-              <circle class="lamp-focus" cx="156" cy="235" r="15"/>
-              <rect x="136" y="160" width="40" height="104" rx="20" fill="rgba(0,0,0,0)"/>
-            </g>
-          </g>
-          <path d="M60 154C60 112 88 92 120 92s60 20 60 62z" fill="url(#lmpShade)"/>
-          <rect x="111" y="84" width="18" height="12" rx="3" fill="#1B2D30" stroke="#C9A86A" stroke-width="1"/>
-          <ellipse cx="120" cy="154" rx="60" ry="8" fill="#050B0C" stroke="#C9A86A" stroke-width="1.5"/>
-          <ellipse class="lamp-light" cx="120" cy="154" rx="56" ry="6.2" fill="url(#lmpRim)"/>
-          <circle class="lamp-bulb" cx="120" cy="157" r="10" fill="#33474A"/>
-          <circle class="lamp-light" cx="120" cy="157" r="10" fill="#FFF1CF"/>
-          <circle class="lamp-light" cx="120" cy="158" r="60" fill="url(#lmpHalo)"/>
-        </g>
-      </svg>
-      <p class="lamp-hint" aria-hidden="true">Zatáhněte<br>za šňůrku</p>
-    </div>
     <div class="gal-top">
-      <div><div class="gal-tag">Vybrané momenty</div><h2 class="gal-h">Rozsviťte <em>příběh</em></h2></div>
+      <div><div class="gal-tag">Vyberte si příběh</div><h2 class="gal-h">Odhrňte <em>oponu</em></h2></div>
       <a href="#filterBar" class="gal-link">Všechny fotky <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
-    <div class="stagger-grid">
-      <div class="sg-item"><img loading="lazy" decoding="async" src="images/svatba-55.jpg" alt="Svatba"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
-      <div class="sg-item"><img loading="lazy" decoding="async" src="images/rodina-13.jpg" alt="Rodina"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
-      <div class="sg-item"><img loading="lazy" decoding="async" src="images/portret-02.jpg" alt="Portrét"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
-      <div class="sg-item"><img loading="lazy" decoding="async" src="images/tehotenstvi-77.jpg" alt="Těhotenství"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
-      <div class="sg-item"><img loading="lazy" decoding="async" src="images/svatba-63.jpg" alt="Svatba"><div class="sg-overlay"><span class="sg-lbl">Zobrazit</span></div></div>
-    </div>
-    <div class="lamp-foot">
-      <button type="button" class="lamp-sound" aria-pressed="false">
-        <svg class="snd-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
-        <svg class="snd-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
-        <span>Zvuk</span>
-      </button>
+    <div class="curtain-scene" data-curtain>
+      <div class="cat-grid">
+        <a class="cat-tile" href="#sec-svatba" data-filter="svatba"><img src="images/svatba-80.jpg" alt="Svatební" loading="lazy" decoding="async"><div class="cat-label"><span class="cat-name">Svatební</span><span class="cat-num">110 fotek</span></div></a>
+        <a class="cat-tile" href="#sec-rodina" data-filter="rodina"><img src="images/rodina-30.jpg" alt="Rodinné" loading="lazy" decoding="async"><div class="cat-label"><span class="cat-name">Rodinné</span><span class="cat-num">61 fotek</span></div></a>
+        <a class="cat-tile" href="#sec-tehotenstvi" data-filter="tehotenstvi"><img src="images/tehotenstvi-10.jpg" alt="Těhotenské" loading="lazy" decoding="async"><div class="cat-label"><span class="cat-name">Těhotenské</span><span class="cat-num">93 fotek</span></div></a>
+        <a class="cat-tile" href="#sec-portret" data-filter="portret"><img src="images/portret-08.jpg" alt="Portréty" loading="lazy" decoding="async"><div class="cat-label"><span class="cat-name">Portréty</span><span class="cat-num">37 fotek</span></div></a>
+      </div>
+      <div class="curtain curtain-l" aria-hidden="true"></div>
+      <div class="curtain curtain-r" aria-hidden="true"></div>
+      <div class="curtain-rod" aria-hidden="true"></div>
+      <div class="curtain-cordbox">
+        <svg viewBox="0 0 48 300" width="48" height="300" xmlns="http://www.w3.org/2000/svg" focusable="false">
+          <g class="curtain-pullwrap">
+            <g class="curtain-pull" role="switch" tabindex="0" aria-checked="false" aria-label="Roztáhnout oponu a zobrazit kategorie">
+              <line x1="24" y1="-60" x2="24" y2="244" stroke="#D9C089" stroke-width="2.2"/>
+              <rect x="19" y="240" width="10" height="9" rx="2" fill="#C9A86A"/>
+              <path d="M16 249h16l3 12h-22z" fill="#B98A3E"/>
+              <path d="M15 261v22M19 261v26M23 261v28M27 261v26M31 261v22M35 261v18" stroke="#D9C089" stroke-width="2" stroke-linecap="round"/>
+              <circle class="curtain-focus" cx="24" cy="262" r="24"/>
+              <rect x="4" y="210" width="40" height="90" rx="18" fill="rgba(0,0,0,0)"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="curtain-hint" aria-hidden="true">Zatáhněte<br>za provázek</p>
     </div>
   </div>
 </section>
@@ -894,66 +838,26 @@ document.addEventListener('keydown', e=>{
   if(e.key==='ArrowRight'){ currentIdx=(currentIdx+1)%visibleItems.length; renderLightbox(); }
 });
 
-// ── LAMPA: tah za šňůrku rozsvítí fotky
+// ── OPONA: tah za provázek roztáhne závěs a odhalí kategorie
 (function(){
-  const stage = document.querySelector('[data-lamp]');
-  if(!stage) return;
-  const handle = stage.querySelector('.lamp-pull');
-  const swingG = stage.querySelector('.lamp-swing');
-  const bulb   = stage.querySelector('.lamp-bulb');
-  const items  = Array.from(stage.querySelectorAll('.sg-item'));
-  const soundBtn = stage.querySelector('.lamp-sound');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let lit = false, interacted = false, soundOn = false, actx = null;
+  const scene = document.querySelector('[data-curtain]');
+  if(!scene) return;
+  const handle = scene.querySelector('.curtain-pull');
+  const grid = scene.querySelector('.cat-grid');
+  const tiles = Array.from(scene.querySelectorAll('.cat-tile'));
+  let open = false, interacted = false;
 
-  stage.classList.add('is-armed');
+  scene.classList.add('is-armed');
+  grid.inert = true;
 
-  function playSound(on){
-    if(!soundOn) return;
-    try {
-      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
-      if(actx.state === 'suspended') actx.resume();
-      const t = actx.currentTime;
-      const len = Math.floor(actx.sampleRate * 0.03);
-      const buf = actx.createBuffer(1, len, actx.sampleRate);
-      const d = buf.getChannelData(0);
-      for(let i = 0; i < len; i++) d[i] = (Math.random()*2 - 1) * Math.pow(1 - i/len, 3);
-      const src = actx.createBufferSource(); src.buffer = buf;
-      const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2200; bp.Q.value = 0.8;
-      const g = actx.createGain(); g.gain.value = 0.6;
-      src.connect(bp); bp.connect(g); g.connect(actx.destination); src.start(t);
-      if(on){
-        const o = actx.createOscillator(), og = actx.createGain();
-        o.type = 'sine'; o.frequency.setValueAtTime(120, t + 0.03);
-        og.gain.setValueAtTime(0.001, t + 0.03);
-        og.gain.linearRampToValueAtTime(0.05, t + 0.11);
-        og.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
-        o.connect(og); og.connect(actx.destination); o.start(t + 0.03); o.stop(t + 0.55);
-      }
-    } catch(e) {}
-  }
-
-  function setLit(on, auto){
-    lit = on;
+  function setOpen(v, auto){
+    open = v;
     if(!auto) interacted = true;
-    handle.setAttribute('aria-checked', String(on));
-    const b = bulb.getBoundingClientRect();
-    const bx = b.left + b.width/2, by = b.top + b.height/2;
-    items.forEach(it => {
-      const r = it.getBoundingClientRect();
-      const dist = Math.hypot(r.left + r.width/2 - bx, r.top + r.height/2 - by);
-      it.style.setProperty('--d', (on && !reduce) ? Math.round(Math.min(dist * 0.8, 900)) + 'ms' : '0ms');
-    });
-    stage.classList.toggle('is-lit', on);
-    if(!reduce){
-      swingG.classList.remove('swing');
-      void swingG.getBoundingClientRect();
-      swingG.classList.add('swing');
-    }
-    playSound(on);
+    handle.setAttribute('aria-checked', String(v));
+    scene.classList.toggle('is-open', v);
+    grid.inert = !v;
   }
 
-  // tažení za šňůrku (myš i dotyk), klepnutí funguje taky
   let dragging = false, moved = false, startY = 0, dy = 0;
   handle.addEventListener('pointerdown', e => {
     dragging = true; moved = false; startY = e.clientY; dy = 0;
@@ -974,7 +878,7 @@ document.addEventListener('keydown', e=>{
     dragging = false;
     handle.classList.remove('dragging');
     handle.style.transform = '';
-    if(commit && (!moved || dy >= 16)) setLit(!lit);
+    if(commit && (!moved || dy >= 16)) setOpen(!open);
   }
   handle.addEventListener('pointerup', () => release(true));
   handle.addEventListener('pointercancel', () => release(false));
@@ -983,34 +887,30 @@ document.addEventListener('keydown', e=>{
       e.preventDefault();
       handle.style.transform = 'translateY(26px)';
       setTimeout(() => { handle.style.transform = ''; }, 160);
-      setLit(!lit);
+      setOpen(!open);
     }
   });
 
-  // klepnutí na ztlumenou fotku taky rozsvítí
-  items.forEach(it => it.addEventListener('click', () => { if(!lit) setLit(true); }));
+  // klepnutí na závěs ho taky otevře
+  scene.querySelectorAll('.curtain').forEach(c => c.addEventListener('click', () => { if(!open) setOpen(true); }));
 
-  // zvuk (výchozí vypnuto)
-  if(soundBtn){
-    soundBtn.addEventListener('click', () => {
-      soundOn = !soundOn;
-      soundBtn.setAttribute('aria-pressed', String(soundOn));
-      if(soundOn){
-        try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {}
-      }
-    });
-  }
+  // klik na kategorii = filtr + skok do galerie
+  tiles.forEach(t => t.addEventListener('click', e => {
+    e.preventDefault();
+    const btn = document.querySelector('.filter-btn[data-filter="' + t.dataset.filter + '"]');
+    if(btn) btn.click();
+  }));
 
-  // pojistka: když nikdo za šňůrku nezatáhne, po 10 s v záběru se rozsvítí samo
+  // pojistka: když nikdo nezatáhne, po 10 s v záběru se závěs otevře sám
   let autoT = null;
   new IntersectionObserver(entries => {
     entries.forEach(e => {
       clearTimeout(autoT);
-      if(e.isIntersecting && !interacted && !lit){
-        autoT = setTimeout(() => { if(!interacted && !lit) setLit(true, true); }, 10000);
+      if(e.isIntersecting && !interacted && !open){
+        autoT = setTimeout(() => { if(!interacted && !open) setOpen(true, true); }, 10000);
       }
     });
-  }, { threshold: 0.35 }).observe(stage);
+  }, { threshold: 0.4 }).observe(scene);
 })();
 </script>
 </body>
