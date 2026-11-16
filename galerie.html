@@ -426,10 +426,10 @@ footer {
   position: absolute; left: calc(var(--px) * -1.0); top: calc(var(--px) * -0.006);
   width: calc(var(--px) * 2.65); height: calc(var(--px) * 2.006);
   background: linear-gradient(160deg, #15282C, #0B1618 70%);
-  border-top: 1px solid rgba(160,205,210,0.55);
+  border-top: 1px solid transparent;
   box-shadow: 0 0 40px rgba(0,0,0,0.55);
   transform-origin: calc(var(--px) * 2.0) calc(var(--px) * 0.006); transform: rotate(0deg);
-  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s;
+  transition: transform 1.3s cubic-bezier(0.65,0,0.2,1) 0.15s, border-color 0.4s ease 0.15s;
   will-change: transform; backface-visibility: hidden;
 }
 .intro-logo {
@@ -460,7 +460,10 @@ footer {
 }
 #intro.leaving { pointer-events: none; }
 #intro.leaving .intro-logo, #intro.leaving .intro-line, #intro.leaving .intro-sub { opacity: 0; transition: opacity 0.35s ease; }
-#intro.leaving .iris-blade { transform: rotate(-72deg); }
+#intro.leaving .iris-blade { transform: rotate(-72deg); border-top-color: rgba(143,191,196,0.45); }
+.iris-hairs { position: absolute; inset: 0; z-index: 6; pointer-events: none; transition: opacity 0.25s ease-out; }
+.iris-hair { position: absolute; left: 0; top: calc(var(--px) * -0.006); width: calc(var(--u) * 0.8); height: 1px; background: rgba(160,205,210,0.55); }
+#intro.leaving .iris-hairs { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { #intro { display: none !important; } }
 
 /* ── STAGGER ── */
@@ -536,7 +539,7 @@ footer {
 
 <!-- INTRO LOADER -->
 <div id="intro">
-  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div></div>
+  <div class="intro-iris" aria-hidden="true"><div class="iris-wrap" style="transform:rotate(0deg);z-index:0"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(60deg);z-index:1"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(120deg);z-index:2"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(180deg);z-index:3"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(240deg);z-index:4"><div class="iris-blade"></div></div><div class="iris-wrap" style="transform:rotate(300deg);z-index:5"><div class="iris-blade"></div></div><div class="iris-hairs"><div class="iris-wrap" style="transform:rotate(0deg)"><div class="iris-hair"></div></div><div class="iris-wrap" style="transform:rotate(60deg)"><div class="iris-hair"></div></div><div class="iris-wrap" style="transform:rotate(120deg)"><div class="iris-hair"></div></div><div class="iris-wrap" style="transform:rotate(180deg)"><div class="iris-hair"></div></div><div class="iris-wrap" style="transform:rotate(240deg)"><div class="iris-hair"></div></div><div class="iris-wrap" style="transform:rotate(300deg)"><div class="iris-hair"></div></div></div></div>
   <div class="intro-logo" id="introLogo"></div>
   <div class="intro-line" id="introLine"></div>
   <div class="intro-sub" id="introSub">Galerie · Portfolio</div>
