@@ -369,6 +369,20 @@ footer {
 }
 .is-armed .curtain-hint { display: block; }
 .is-open .curtain-hint { opacity: 0; }
+.curtain-foot { display: flex; justify-content: flex-end; margin-top: 1.5rem; }
+.curtain-sound {
+  display: inline-flex; align-items: center; gap: 0.55rem;
+  background: none; border: 1px solid rgba(255,255,255,0.18); color: rgba(255,255,255,0.6);
+  padding: 0.5rem 1rem; border-radius: 100px; cursor: pointer;
+  font-family: var(--sans); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: all 0.3s;
+}
+.curtain-sound:hover, .curtain-sound[aria-pressed="true"] { border-color: var(--stage-lt); color: var(--stage-lt); }
+.curtain-sound svg { width: 14px; height: 14px; }
+.curtain-sound .snd-on { display: none; }
+.curtain-sound[aria-pressed="true"] .snd-on { display: block; }
+.curtain-sound[aria-pressed="true"] .snd-off { display: none; }
+
 @keyframes cordTug {
   0%, 84%, 100% { transform: translateY(0); } 88% { transform: translateY(12px); }
   92% { transform: translateY(0); } 95% { transform: translateY(6px); } 98% { transform: translateY(0); }
@@ -601,6 +615,13 @@ footer {
         </svg>
       </div>
       <p class="curtain-hint" aria-hidden="true">Zatáhněte<br>za provázek</p>
+    </div>
+    <div class="curtain-foot">
+      <button type="button" class="curtain-sound" aria-pressed="true">
+        <svg class="snd-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M22 9l-6 6M16 9l6 6"/></svg>
+        <svg class="snd-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>
+        <span>Zvuk</span>
+      </button>
     </div>
   </div>
 </section>
@@ -978,7 +999,45 @@ window.addEventListener('resize', () => { if(lb.classList.contains('open')) rese
   const handle = scene.querySelector('.curtain-pull');
   const grid = scene.querySelector('.cat-grid');
   const tiles = Array.from(scene.querySelectorAll('.cat-tile'));
-  let open = false, interacted = false;
+  let open = false, interacted = false, soundOn = true, actx = null;
+  const soundBtn = document.querySelector('.curtain-sound');
+  try { if(localStorage.getItem('tp-sound') === 'off') soundOn = false; } catch(_) {}
+  if(soundBtn) soundBtn.setAttribute('aria-pressed', String(soundOn));
+
+  // zvuk závěsu: cvaknutí šňůrky + šustění látky (generované, žádný soubor)
+  function playCurtain(opening){
+    if(!soundOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if(actx.state === 'suspended') actx.resume();
+      const t = actx.currentTime;
+      const click = actx.createBufferSource();
+      const cl = Math.floor(actx.sampleRate * 0.03), cb = actx.createBuffer(1, cl, actx.sampleRate), cd = cb.getChannelData(0);
+      for(let i = 0; i < cl; i++) cd[i] = (Math.random()*2 - 1) * Math.pow(1 - i/cl, 3);
+      click.buffer = cb;
+      const cf = actx.createBiquadFilter(); cf.type = 'bandpass'; cf.frequency.value = 2200; cf.Q.value = 0.8;
+      const cg = actx.createGain(); cg.gain.value = 0.5;
+      click.connect(cf); cf.connect(cg); cg.connect(actx.destination); click.start(t);
+      const dur = opening ? 1.5 : 1.0, st = t + 0.08;
+      const nl = Math.floor(actx.sampleRate * dur), nb = actx.createBuffer(1, nl, actx.sampleRate), nd = nb.getChannelData(0);
+      for(let i = 0; i < nl; i++) nd[i] = Math.random()*2 - 1;
+      const n = actx.createBufferSource(); n.buffer = nb;
+      const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.7;
+      bp.frequency.setValueAtTime(opening ? 400 : 1400, st);
+      bp.frequency.exponentialRampToValueAtTime(opening ? 1400 : 400, st + dur);
+      const g = actx.createGain();
+      g.gain.setValueAtTime(0.0001, st);
+      g.gain.linearRampToValueAtTime(0.16, st + dur * 0.3);
+      g.gain.exponentialRampToValueAtTime(0.0001, st + dur);
+      n.connect(bp); bp.connect(g); g.connect(actx.destination); n.start(st); n.stop(st + dur);
+    } catch(e) {}
+  }
+  if(soundBtn) soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    try { localStorage.setItem('tp-sound', soundOn ? 'on' : 'off'); } catch(_) {}
+    if(soundOn){ try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); actx.resume(); } catch(_) {} }
+  });
 
   scene.classList.add('is-armed');
   grid.inert = true;
@@ -989,6 +1048,7 @@ window.addEventListener('resize', () => { if(lb.classList.contains('open')) rese
     handle.setAttribute('aria-checked', String(v));
     scene.classList.toggle('is-open', v);
     grid.inert = !v;
+    playCurtain(v);
   }
 
   let dragging = false, moved = false, startY = 0, dy = 0;
