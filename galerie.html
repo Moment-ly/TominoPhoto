@@ -743,7 +743,7 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.body.
 requestAnimationFrame(() => {
   logoEl.querySelectorAll('.intro-char').forEach(ch => { ch.style.transform='translateY(0)'; ch.style.opacity='1'; });
   setTimeout(() => { lineEl.style.width='100%'; subEl.style.color = 'rgba(143,191,196,0.75)'; }, 600);
-  setTimeout(() => { document.getElementById('intro').classList.add('leaving'); document.body.style.overflow=''; }, 1800);
+  setTimeout(() => { document.getElementById('intro').classList.add('leaving'); if(!lb.classList.contains('open')) document.body.style.overflow=''; }, 1800);
   setTimeout(() => { document.getElementById('intro').style.display='none'; }, 3400);
 });
 
@@ -1099,6 +1099,18 @@ window.addEventListener('resize', () => { if(lb.classList.contains('open')) rese
       }
     });
   }, { threshold: 0.4 }).observe(scene);
+})();
+
+// ── Přímý odkaz na fotku z úvodní stránky (galerie.html#foto=svatba-55) otevře rovnou lightbox
+(function(){
+  const m = location.hash.match(/^#foto=([\w-]+)/);
+  if(!m) return;
+  const it = Array.from(document.querySelectorAll('.m-item')).find(i => { const im = i.querySelector('img'); return im && im.src.indexOf('/' + m[1] + '.') > -1; });
+  history.replaceState(null, '', location.pathname);
+  if(!it) return;
+  const intro = document.getElementById('intro');
+  if(intro) intro.style.display = 'none';
+  setTimeout(() => openLightbox(it), 60);
 })();
 </script>
 </body>
